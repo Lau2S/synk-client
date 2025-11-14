@@ -1,30 +1,31 @@
 import type React from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
+import { useEffect } from 'react';
+import './Login.scss';
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
-    const { setUser } = useAuthStore();
+    const { loginWithGoogle, initAuthObserver } = useAuthStore();
 
     const handleLoginGoogle = (e: React.FormEvent) => {
         e.preventDefault();
-        const user = {
-            displayName: "John Doe",
-            email: "john.doe@gmail.com",
-            photoURL: "photo.com",
-        }
-        setUser(user);
-        navigate("/profile")
+        loginWithGoogle().then(() => navigate('/profile'));
     }
+
+    useEffect(() => {
+        const unsub = initAuthObserver();
+        return () => unsub();
+    }, [initAuthObserver]);
 
     return (
         <div className="container-page">
-            <div >
-                <h1>Iniciar Sesión</h1>
+            <div className="login-card">
+                <h2>Iniciar Sesión</h2>
                 <div>
-                    <button onClick={handleLoginGoogle} >
+                    <button className='login-button' onClick={handleLoginGoogle} >
                         <img src="icons/google-icon.svg" alt="Iniciar sesión con Google" width={24} height={24} />
-                        <span>Google</span>
+                        <span className='login-button'>Google</span>
                     </button>
                 </div>
             </div>
