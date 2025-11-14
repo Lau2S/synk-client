@@ -50,14 +50,16 @@ const Login: React.FC = () => {
                     </div>
 
                 </form>
+
+                <button className='login-button'>Iniciar Sesión</button>
                 
                 <div className="login-options">
-                    <button className='login-button' onClick={handleLoginGoogle} >
+                    <button className='google-button' onClick={handleLoginGoogle} >
                         <img src="logos/google-logo.png" alt="Iniciar sesión con Google"/>
                         <span>Google</span>
                     </button>
 
-                    <button className='login-button' onClick={handleLoginGoogle} >
+                    <button className='facebook-button' onClick={handleLoginGoogle} >
                         <img src="logos/facebook-logo.png" alt="Iniciar sesión con Facebook"/>
                         <span>Facebook</span>
                     </button>

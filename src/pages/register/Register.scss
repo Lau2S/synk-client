@@ -1,0 +1,121 @@
+// Variables de color
+$color-primary: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text-primary: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$color-buttons: #3ec7cd;
+
+// Mixin para efecto glassmorphism
+@mixin glassmorphism {
+  background: $color-card-bg;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// Contenedor principal
+.container-register{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+   background: 
+    radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
+    radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
+    #1b2226;
+
+  // Tarjeta de registro
+  .register-card {
+    @include glassmorphism;
+    background-color: transparent;
+    padding: 3rem;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    // position: absolute;
+
+    // Título
+    h2 {
+      margin-bottom: 1rem;
+      color: $white;
+      font-size: 2rem;
+    }
+
+    // Descripción
+    p {
+      margin-bottom: 2rem;
+      color: $text-primary;
+      font-size: 1rem;
+    }
+
+    // Formulario de login
+    .register-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+
+      // Grupo de formulario
+      .form-group {
+        position: relative;
+      }
+
+      // Input del formulario
+      .form-input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        background: $white;
+        border: 2px solid transparent;
+        border-radius: 12px;
+        font-size: 1rem;
+        color: $color-primary;
+        transition: all 0.3s ease;
+
+        &::placeholder {
+          color: rgba(51, 51, 51, 0.7);
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          background: rgba(255, 255, 255, 0.95);
+        }
+      }
+    }
+
+    // Opciones de login
+    .login-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      margin-top: 2rem;
+
+      // Botón de login
+      .login-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.7rem;
+        width: 100%;
+        background-color: $white;
+        color: $color-secondary;
+        border: 2px solid $color-buttons;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.12s ease, filter 0.12s ease;
+
+        img {
+          display: block;
+          width: 24px;
+          height: 24px;
+        }
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+      }
+    }
+  }
+}
