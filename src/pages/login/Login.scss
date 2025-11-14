@@ -14,7 +14,7 @@ $color-buttons: #3ec7cd;
 }
 
 // Contenedor principal
-.container-page {
+.container-login{
   display: flex;
   justify-content: center;
   align-items: center;
@@ -104,6 +104,8 @@ $color-buttons: #3ec7cd;
 
         img {
           display: block;
+          width: 24px;
+          height: 24px;
         }
 
         &:hover {

@@ -19,7 +19,7 @@ const Login: React.FC = () => {
     }, [initAuthObserver]);
 
     return (
-        <div className="container-page">
+        <div className="container-login">
             <div className="login-card">
                 <h2>Iniciar Sesión</h2>
                 <p>Ingresa tus datos para comenzar a usar Synk </p>
@@ -53,12 +53,12 @@ const Login: React.FC = () => {
                 
                 <div className="login-options">
                     <button className='login-button' onClick={handleLoginGoogle} >
-                        <img src="icons/google-icon.svg" alt="Iniciar sesión con Google" width={24} height={24} />
+                        <img src="logos/google-logo.png" alt="Iniciar sesión con Google"/>
                         <span>Google</span>
                     </button>
 
                     <button className='login-button' onClick={handleLoginGoogle} >
-                        <img src="icons/google-icon.svg" alt="Iniciar sesión con Facebook" width={24} height={24} />
+                        <img src="logos/facebook-logo.png" alt="Iniciar sesión con Facebook"/>
                         <span>Facebook</span>
                     </button>
                 </div>
