@@ -1,3 +1,4 @@
+// Variables de color
 $color-primary: #1b2226;
 $color-secondary: #2a3034;
 $white: #ffffff;
@@ -5,12 +6,14 @@ $text-primary: #a8c4c5;
 $color-card-bg: rgba(255, 255, 255, 0.1);
 $color-buttons: #3ec7cd;
 
+// Mixin para efecto glassmorphism
 @mixin glassmorphism {
   background: $color-card-bg;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+// Contenedor principal
 .container-page {
   display: flex;
   justify-content: center;
@@ -18,6 +21,7 @@ $color-buttons: #3ec7cd;
   height: 100vh;
   background-color: $color-primary;
 
+  // Tarjeta de login
   .login-card {
     @include glassmorphism;
     background-color: $color-secondary;
@@ -27,31 +31,32 @@ $color-buttons: #3ec7cd;
     text-align: center;
     position: relative;
 
+    // Título
     h2 {
       margin-bottom: 1rem;
       color: $white;
       font-size: 2rem;
     }
 
+    // Descripción
     p {
       margin-bottom: 2rem;
       color: $text-primary;
       font-size: 1rem;
     }
 
+    // Formulario de login
     .login-form {
       display: flex;
       flex-direction: column;
       gap: 1rem;
 
+      // Grupo de formulario
       .form-group {
         position: relative;
-
-        // &.password-group {
-        //   margin-bottom: 0.6rem;
-        // }
       }
 
+      // Input del formulario
       .form-input {
         width: 100%;
         padding: 0.8rem 1rem;
@@ -74,37 +79,38 @@ $color-buttons: #3ec7cd;
       }
     }
 
-
+    // Opciones de login
     .login-options {
       display: flex;
       flex-direction: column;
       gap: 0.7rem;
       margin-top: 2rem;
-    }
-      
-        .login-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            width: 100%;
-            background-color: $white;
-            color: $color-secondary;
-            border: 2px solid $color-buttons;
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: transform 0.12s ease, filter 0.12s ease;
-    
-            img {
-                display: block;
-            }
-    
-            &:hover {
-                transform: translateY(-2px);
-                filter: brightness(0.95);
-            }
+
+      // Botón de login
+      .login-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        width: 100%;
+        background-color: $white;
+        color: $color-secondary;
+        border: 2px solid $color-buttons;
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.12s ease, filter 0.12s ease;
+
+        img {
+          display: block;
         }
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+      }
+    }
   }
 }
