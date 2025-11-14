@@ -23,10 +23,43 @@ const Login: React.FC = () => {
             <div className="login-card">
                 <h2>Iniciar Sesión</h2>
                 <p>Ingresa tus datos para comenzar a usar Synk </p>
-                <div>
+
+                <form className='login-form'>
+                    <div className="form-group">
+                        <input
+                        type="email"
+                        id="email"
+                        placeholder="Ingresa tu Email"
+                        //value={email}
+                        //onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="form-input"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <input
+                        type="password"
+                        id="password"
+                        placeholder="Ingresa tu Contraseña"
+                        //value={password}
+                        //onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="form-input"
+                        />
+                    </div>
+
+                </form>
+                
+                <div className="login-options">
                     <button className='login-button' onClick={handleLoginGoogle} >
                         <img src="icons/google-icon.svg" alt="Iniciar sesión con Google" width={24} height={24} />
                         <span>Google</span>
+                    </button>
+
+                    <button className='login-button' onClick={handleLoginGoogle} >
+                        <img src="icons/google-icon.svg" alt="Iniciar sesión con Facebook" width={24} height={24} />
+                        <span>Facebook</span>
                     </button>
                 </div>
             </div>
