@@ -22,10 +22,11 @@ const Login: React.FC = () => {
         <div className="container-page">
             <div className="login-card">
                 <h2>Iniciar Sesión</h2>
+                <p>Ingresa tus datos para comenzar a usar Synk </p>
                 <div>
                     <button className='login-button' onClick={handleLoginGoogle} >
                         <img src="icons/google-icon.svg" alt="Iniciar sesión con Google" width={24} height={24} />
-                        <span className='login-button'>Google</span>
+                        <span>Google</span>
                     </button>
                 </div>
             </div>
