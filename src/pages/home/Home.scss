@@ -10,7 +10,7 @@ $color-buttons: #3ec7cd;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
       // Fondo con gradiente
     background: 
     radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
@@ -81,7 +81,7 @@ $color-buttons: #3ec7cd;
 
     @media (max-width: 768px) {
         flex-direction: column;
-        padding: 2rem;
+        padding: 7rem 1.8rem;
         justify-content: center;
 
         .content-left{
