@@ -1,0 +1,42 @@
+// Variables de color
+$color-primary: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text-primary: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$color-buttons: #3ec7cd;
+
+footer {
+  background: $color-primary;
+  backdrop-filter: blur(70px);
+  padding: 2rem 4rem;
+  text-align: center;
+  
+  p {
+    color: $text-primary;
+    font-size: 1rem;
+    margin-top: 1rem;
+  }
+  
+  a {
+    color: $text-primary;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: #ffffff;
+    }
+  }
+  // Separador entre enlaces
+  .footer-separator {
+    color: $text-primary;
+    margin: 0 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 768px) {
+  footer {
+    padding: 1.5rem 1.5rem;
+  }
+}

@@ -1,0 +1,175 @@
+// Variables de color
+$color-primary: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text-primary: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$color-buttons: #3ec7cd;
+
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+  border-bottom: 1px solid $color-card-bg;
+  backdrop-filter: blur(70px);
+  
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 4rem;
+    max-width: 1600px;
+    margin: 0 auto;
+    width: 100%;
+
+    @media (max-width: 1024px) {
+      padding: 1rem 2rem;
+    }
+
+    @media (max-width: 768px) {
+      padding: 0.75rem 1.25rem;
+      flex-wrap: wrap;
+    }
+  }
+
+  .nav-logo-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    z-index: 10;
+
+    .nav-logo {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      @media (max-width: 768px) {
+        height: 32px;
+      }
+    }
+  }
+  
+  // Navigation links container
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+
+    @media (max-width: 1024px) {
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      order: 3;
+      width: 100%;
+      justify-content: center;
+      gap: 1.5rem;
+      padding-top: 0.75rem;
+    }
+    
+    // Individual links
+    a {
+      color: $white;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.9375rem;
+      transition: color 0.3s ease;
+      position: relative;
+      white-space: nowrap;
+
+      @media (max-width: 768px) {
+        font-size: 0.875rem;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -4px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: $text-primary;
+        transition: width 0.3s ease;
+      }
+
+      &:hover {
+        color: $white;
+
+        &::after {
+          width: 100%;
+        }
+      }
+    }
+  }
+  
+  // Auth buttons
+  .auth-buttons {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+
+    @media (max-width: 768px) {
+      gap: 0.625rem;
+    }
+    
+    button {
+      padding: 0.625rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+
+      @media (max-width: 768px) {
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+        border-radius: 8px;
+      }
+      
+      &.btn-register {
+        background: $color-buttons;
+        color: $white;
+        border: none;
+        
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+          border-width: 1.5px;
+        }
+      }
+      
+      &.btn-login {
+        background: $color-buttons;
+        color: $white;
+        border: none;
+        
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,146 @@
+// Variables de color
+$color-primary: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text-primary: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$color-buttons: #3ec7cd;
+
+@mixin glassmorphism {
+  background: $color-card-bg;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.container-about-us{
+    display: flex;            
+    flex-direction: column;
+    justify-content:center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 6.4rem 4.5em 3rem 4.5em;
+      // Fondo con gradiente
+    background: 
+    radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
+    radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
+    #1b2226;
+    gap: 2rem;
+
+    .main-container{
+        text-align: center;
+
+        h1{
+          color: $white;
+          font-size: 3rem;
+          line-height: 1.2;
+          margin-bottom: 1rem;
+          font-weight: 700;
+        }
+    
+        p{
+          color: $text-primary;
+          font-size: 1.1rem;
+          line-height: 1.6;
+          margin-bottom: 0.6rem;
+          margin-top: 0;
+          padding: 1rem 7rem;
+        }
+
+
+        button{
+            padding: 1rem 3.5rem;    
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            color: $white;
+            background-color: $color-buttons;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+            &:hover{
+                transform: translateY(-2px);
+                filter: brightness(0.95);
+            }
+        }
+    }
+
+    h2{
+        color: $white;
+        font-size: 2.5rem;
+        line-height: 1.2;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .content-group{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;         // MUY importante
+        max-width: 1200px;     // para que no se estiren demasiado
+        margin: 0 auto;    
+
+        .box {
+                text-align: center;
+                border: 2px solid $text-primary;
+                border-radius: 10px;
+                padding: 1rem;
+                background-color: $color-secondary;
+                width: 240px;      // todas iguales
+                min-height: 150px; // misma altura mínima
+                @include glassmorphism;
+        
+                h3 {
+                    color: $white;
+                    font-size: 1.5rem;
+                    line-height: 1.2;
+                    margin-bottom: 1rem;
+                    font-weight: 700;
+                }
+        
+                p {
+                    color: $text-primary;
+                    font-size: 1.1rem;
+                    line-height: 1.6;
+                }
+            }
+
+    }
+
+    // Responsive
+    @media (max-width: 1024px) {
+        padding: 0 4rem;
+        gap: 2rem;
+
+        .content-left h1{
+            font-size: 2.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        padding: 7rem 1.8rem;
+        justify-content: center;
+
+        .content-left{
+            text-align: center;
+            max-width: 500px;
+
+            h1{
+                font-size: 2.3rem;
+            }
+
+            p{
+                font-size: 1rem;
+            }
+        }
+
+        .content-right{
+            max-width: 600px
+        }
+    }
+}
