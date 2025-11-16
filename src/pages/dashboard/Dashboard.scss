@@ -1,7 +1,308 @@
 // Variables de color
-$color-primary: #1b2226;
+$bg: #1b2226;
 $color-secondary: #2a3034;
 $white: #ffffff;
-$text-primary: #a8c4c5;
+$text: #a8c4c5;
 $color-card-bg: rgba(255, 255, 255, 0.1);
-$color-buttons: #3ec7cd;
+$accent: #3ec7cd;
+$muted: #a8c4c5;
+$action-width: 420px;
+
+.container-dashboard {
+    min-height: 100vh;
+    background:
+        radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
+        radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
+        #1b2226;
+    color: $text;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+/* Topbar */
+.topbar {
+    width: 100%;
+    max-width: 100%;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .logo-bubble {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: $bg;
+            border: 2px solid $accent;
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+    }
+
+    .user-area {
+        position: relative;
+
+        .user-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+
+            .user-initial {
+                color: $bg;
+                font-weight: 700;
+            }
+        }
+
+        .user-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: rgba(27, 34, 38, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+            min-width: 160px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            .user-menu-item {
+                padding: 10px 14px;
+                color: $text;
+                text-align: left;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                text-decoration: none;
+                font-size: 0.95rem;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.03);
+                }
+            }
+        }
+    }
+}
+
+/* Hero */
+.hero {
+    width: 100%;
+    max-width: 980px;
+    margin: 48px auto 30px;
+    padding: 0 20px;
+    text-align: center;
+
+    h1 {
+        font-size: 2.2rem; // texto grande como en la imagen
+        font-weight: 800;
+        margin-bottom: 22px;
+        line-height: 1.08;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 28px;
+
+        // ambos bloques comparten el mismo ancho
+        .primary-btn,
+        .join-row {
+            width: $action-width;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .primary-btn {
+            background: $accent;
+            color: #fff;
+            border: none;
+            padding: 12px 0;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 5rem;
+        }
+
+        .join-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            padding: 8px;
+            border-radius: 10px;
+
+
+            .join-input {
+                flex: 1;
+                border: none;
+                padding: 10px 12px;
+                border-radius: 6px;
+                background: #f1f1f1;
+                color: $bg;
+                min-width: 0; // evita overflow en mobile
+                font-size: 0.95rem;
+            }
+
+            .join-btn {
+                background: $accent;
+                border: none;
+                color: #fff;
+                padding: 10px 14px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 700;
+            }
+        }
+    }
+
+    .features {
+        display: flex;
+        gap: 36px;
+        justify-content: center;
+        margin-top: 8rem;
+        flex-wrap: wrap;
+
+        .feature {
+            width: 260px;
+            text-align: center;
+            color: $muted;
+
+            h3 {
+                color: $text;
+                margin-top: 18px;
+                font-size: 1rem;
+            }
+
+            p {
+                font-size: 0.85rem;
+                margin-top: 8px;
+                line-height: 1.25;
+            }
+
+            .icon-circle {
+                width: 112px;
+                height: 112px;
+                border-radius: 999px;
+                background: #e9e9e9;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+
+                img {
+                    width: 44px;
+                    height: 44px;
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+
+
+/* Responsive */
+@media (max-width: 760px) {
+    .hero {
+        margin: 28px 16px;
+
+        h1 {
+            font-size: 1.1rem;
+        }
+
+        .actions {
+
+            .primary-btn,
+            .join-row {
+                width: 100%;
+            }
+
+            .join-row {
+                padding: 6px;
+
+                .join-btn {
+                    padding: 8px 12px;
+                }
+            }
+        }
+
+        .features {
+            gap: 22px;
+
+            .feature {
+                width: 100%;
+                max-width: 320px;
+                margin: 0 auto;
+            }
+
+            .icon-circle {
+                width: 84px;
+                height: 84px;
+
+                img {
+                    width: 36px;
+                    height: 36px;
+                }
+            }
+        }
+    }
+}
+
+.nav-logo-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    z-index: 10;
+
+    .nav-logo {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+        display: block;
+        transition: opacity 0.3s ease;
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            height: 32px;
+        }
+    }
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: $bg;
+    /* iguala fondo de la app al del dashboard */
+    overflow-x: hidden;
+    /* evita scroll horizontal / franja negra */
+}
