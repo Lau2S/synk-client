@@ -112,18 +112,16 @@ $action-width: 420px;
     text-align: center;
 
     h1 {
-        font-size: 2.2rem; // texto grande como en la imagen
-        font-weight: 800;
-        margin-bottom: 22px;
-        line-height: 1.08;
+        font-size: 2.5rem; // texto grande como en la imagen
+        font-weight: 700;
     }
 
     .actions {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 14px;
-        margin-bottom: 28px;
+        gap: 1.8rem;
+        margin-bottom: 4rem;
 
         // ambos bloques comparten el mismo ancho
         .primary-btn,
@@ -137,28 +135,34 @@ $action-width: 420px;
             background: $accent;
             color: #fff;
             border: none;
-            padding: 12px 0;
-            border-radius: 8px;
+            padding: 16px 0;
+            border-radius: 10px;
             font-weight: 700;
             cursor: pointer;
             font-size: 1rem;
-            margin-top: 5rem;
+            margin-top: 4rem;
+
+            &:hover {
+                transform: translateY(-2px);
+                filter: brightness(0.95);
+            }
         }
 
         .join-row {
             display: flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.06);
+            background: $color-card-bg;
             padding: 8px;
             border-radius: 10px;
+            border: 1px solid $bg;
 
 
             .join-input {
                 flex: 1;
                 border: none;
-                padding: 10px 12px;
-                border-radius: 6px;
+                padding: 12px 12px;
+                border-radius: 8px;
                 background: #f1f1f1;
                 color: $bg;
                 min-width: 0; // evita overflow en mobile
@@ -169,34 +173,40 @@ $action-width: 420px;
                 background: $accent;
                 border: none;
                 color: #fff;
-                padding: 10px 14px;
+                padding: 12px 14px;
                 border-radius: 8px;
                 cursor: pointer;
                 font-weight: 700;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    filter: brightness(0.95);
+                }
             }
         }
     }
 
     .features {
         display: flex;
-        gap: 36px;
+        gap: 4rem;
         justify-content: center;
         margin-top: 8rem;
+        margin-bottom: 2rem;
         flex-wrap: wrap;
 
         .feature {
-            width: 260px;
+            width: 270px;
             text-align: center;
             color: $muted;
 
             h3 {
-                color: $text;
+                color: $white;
                 margin-top: 18px;
-                font-size: 1rem;
+                font-size: 1.1rem;
             }
 
             p {
-                font-size: 0.85rem;
+                font-size: 0.8rem;
                 margin-top: 8px;
                 line-height: 1.25;
             }
@@ -212,8 +222,8 @@ $action-width: 420px;
                 margin: 0 auto;
 
                 img {
-                    width: 44px;
-                    height: 44px;
+                    width: 50px;
+                    height: 50px;
                     display: block;
                 }
             }
@@ -226,10 +236,10 @@ $action-width: 420px;
 /* Responsive */
 @media (max-width: 760px) {
     .hero {
-        margin: 28px 16px;
+        margin: 38px 16px;
 
         h1 {
-            font-size: 1.1rem;
+            font-size: 1.6rem;
         }
 
         .actions {
