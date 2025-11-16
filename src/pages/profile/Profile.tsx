@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useAuthStore from '../../stores/useAuthStore'
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Profile.scss';
 
 const Profile: React.FC = () => {
