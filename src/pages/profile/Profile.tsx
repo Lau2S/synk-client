@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import useAuthStore from '../../stores/useAuthStore'
 import { useNavigate } from 'react-router-dom';
 import './Profile.scss';
@@ -8,9 +8,6 @@ const Profile: React.FC = () => {
     const logout = useAuthStore((s) => s.logout);
     const user = useAuthStore((s) => s.user);
     const setUser = useAuthStore((s) => s.setUser);
-
-    const [menuOpen, setMenuOpen] = useState(false);
-    const menuRef = useRef<HTMLDivElement | null>(null);
 
     // modales / formularios
     const [showEdit, setShowEdit] = useState(false);
@@ -28,19 +25,7 @@ const Profile: React.FC = () => {
     const [deleteSending, setDeleteSending] = useState(false);
     const [deleteMsg, setDeleteMsg] = useState('');
 
-    useEffect(() => {
-        const handler = (e: MouseEvent) => {
-            if (!menuRef.current) return;
-            if (!menuRef.current.contains(e.target as Node)) setMenuOpen(false);
-        };
-        document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
-    }, []);
-
-    const handleLogout = async () => {
-        await logout();
-        navigate('/login');
-    };
+    
 
     const handleEditOpen = () => {
         setEditName(user?.displayName ?? '');
