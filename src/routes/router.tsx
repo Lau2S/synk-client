@@ -36,6 +36,10 @@ export const routes = [
             {
                 path: "dashboard",
                 element: <Dashboard />,
+            },
+            {
+                path: "profile",
+                element: <Profile />,
             }
             
         ]

@@ -1,0 +1,267 @@
+$bg: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$accent: #3ec7cd;
+$muted: #a8c4c5;
+$action-width: 420px;
+$color-primary: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text-primary: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$color-buttons: #3ec7cd;
+
+@mixin glassmorphism {
+    background: $color-card-bg;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.topbar {
+    width: 100%;
+    max-width: 100%;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .logo-bubble {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: $bg;
+            border: 2px solid $accent;
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+    }
+
+    .user-area {
+        position: relative;
+
+        .user-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+
+            .user-initial {
+                color: $bg;
+                font-weight: 700;
+            }
+        }
+
+        .user-menu {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 8px);
+            background: rgba(27, 34, 38, 0.98);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+            min-width: 160px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            .user-menu-item {
+                padding: 10px 14px;
+                color: $text;
+                text-align: left;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                text-decoration: none;
+                font-size: 0.95rem;
+
+                &:hover {
+                    background: rgba(255, 255, 255, 0.03);
+                }
+            }
+        }
+    }
+}
+
+.container-profile {
+    min-height: 100vh;
+    background:
+        radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
+        radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
+        #1b2226;
+    color: $text;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.profile-card {
+    @include glassmorphism;
+    background-color: transparent;
+    padding: 3rem 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    margin-top: 4rem;
+
+    // Título
+    h2 {
+        margin-bottom: 1rem;
+        color: $white;
+        font-size: 2rem;
+    }
+
+    // Descripción
+    p {
+        margin-bottom: 2rem;
+        color: $text-primary;
+        font-size: 1rem;
+    }
+
+
+    .profile-button {
+        margin-top: 1.5rem;
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $white;
+        background-color: $color-buttons;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.95);
+        }
+
+    }
+
+    .profile-button {
+        margin-top: 1.5rem;
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $white;
+        background-color: $color-buttons;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.95);
+        }
+
+    }
+
+    .delete-button {
+        margin-top: 1rem;
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $white;
+        background-color: #707070;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.95);
+        }
+
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: $white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .avatar-wrap {
+        margin-top: 8px;
+        margin-bottom: 8px;
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #fff;
+            color: $color-primary;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            user-select: none;
+            border: 8px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+        }
+    }
+
+
+}
+
+@media (max-width: 520px) {
+    .profile-card {
+        padding: 1.6rem 1.2rem;
+        border-radius: 10px;
+    }
+
+    .avatar {
+        width: 92px;
+        height: 92px;
+    }
+
+    .profile-name {
+        font-size: 1.3rem;
+    }
+
+    .profile-info {
+        max-width: 100%;
+
+        .label {
+            width: 64px;
+        }
+    }
+}

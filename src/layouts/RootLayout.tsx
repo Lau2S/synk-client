@@ -11,7 +11,7 @@ const RootLayout: React.FC = () => {
   const location = useLocation();
 
   // Rutas en las que no queremos mostrar el Navbar
-  const hiddenNavbarPrefixes = ["/dashboard", "/profile"];
+  const hiddenNavbarPrefixes = ["/dashboard", "/profile", "/profile"];
   const hideNavbar = hiddenNavbarPrefixes.some((p) =>
     location.pathname.startsWith(p)
   );
