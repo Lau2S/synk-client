@@ -1,6 +1,7 @@
 import React from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../components/navbar/Navbar";
+import NavbarDashboard from "../components/navbar/NavbarDashboard";
 import Footer from "../components/footer/Footer";
 
 /**
@@ -10,17 +11,19 @@ import Footer from "../components/footer/Footer";
 const RootLayout: React.FC = () => {
   const location = useLocation();
 
-  // Rutas en las que no queremos mostrar el Navbar
-  const hiddenNavbarPrefixes = ["/dashboard", "/profile"];
-  const hideNavbar = hiddenNavbarPrefixes.some((p) =>
-    location.pathname.startsWith(p)
-  );
+  // Selección condicional del Navbar según la ruta
+  const isDashboard = location.pathname.startsWith("/dashboard");
+  const isProfile = location.pathname.startsWith("/profile");
+  const useAuthNavbar = isDashboard || isProfile;
+
   return (
     <div className="root-layout">
-      {!hideNavbar && <Navbar />}
+      {useAuthNavbar ? <NavbarDashboard /> : <Navbar />}
+
       <main className="main-content">
         <Outlet />
       </main>
+
       <Footer />
     </div>
   );

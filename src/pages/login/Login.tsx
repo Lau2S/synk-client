@@ -76,7 +76,11 @@ const Login: React.FC = () => {
                 className="form-input"
               />
             </div>
-            <div className="forgot-row">
+             
+          </form>
+
+          <button className="login-button">Iniciar Sesión</button>
+           <div className="forgot-row">
               <button
                 type="button"
                 className="forgot-link"
@@ -86,10 +90,6 @@ const Login: React.FC = () => {
               </button>
             </div>
           
-
-          </form>
-
-          <button className="login-button">Iniciar Sesión</button>
 
           <div className="separator">
             <span>o</span>

@@ -210,7 +210,8 @@ $color-buttons: #3ec7cd;
   .modal-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(24, 24, 24, 0.6);
+    backdrop-filter: blur(10px);
   }
 
   .modal-content {
@@ -223,9 +224,7 @@ $color-buttons: #3ec7cd;
     border-radius: 18px;
     text-align: center;
     color: $white;
-    background-color: 
-      
-      #1b2226;
+    background-color: $color-primary;
     ;
 
     .modal-close-btn {
@@ -242,21 +241,21 @@ $color-buttons: #3ec7cd;
     .modal-title {
       font-size: 1.9rem;
       margin-bottom: 0.2rem;
-      font-weight: 800;
+      font-weight: 700;
     }
 
     .modal-subtitle {
       font-size: 0.95rem;
       color: $text-primary;
-      margin-bottom: 1.1rem;
-      margin-top: 2rem;
+      margin-bottom: 1rem;
+      margin-top: 1rem;
     }
 
     .reset-form {
       display: flex;
       flex-direction: column;
       gap: 0.9rem;
-      margin-top: 6px;
+      margin-top: 2rem;
       
 
       .reset-input {
@@ -278,6 +277,11 @@ $color-buttons: #3ec7cd;
         font-weight: 700;
         cursor: pointer;
         font-size: 1.05rem;
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
       }
 
       .reset-cancel-btn {
@@ -289,6 +293,11 @@ $color-buttons: #3ec7cd;
         font-weight: 700;
         cursor: pointer;
         font-size: 1rem;
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
       }
 
       .reset-info {

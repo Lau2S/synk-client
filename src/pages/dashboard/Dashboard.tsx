@@ -1,64 +1,15 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import useAuthStore from '../../stores/useAuthStore';
+import React from "react";
 import './Dashboard.scss';
 import CameraIcon from '/logos/camera.svg?url';
 import CodeIcon from '/logos/code.svg?url';
 import LockIcon from '/logos/lock.svg?url';
 
 const Dashboard: React.FC = () => {
-    const navigate = useNavigate();
-    const logout = useAuthStore((s) => s.logout);
-    const user = useAuthStore((s) => s.user);
-
-    const [menuOpen, setMenuOpen] = useState(false);
-    const menuRef = useRef<HTMLDivElement | null>(null);
-
-    useEffect(() => {
-        const handler = (e: MouseEvent) => {
-            if (!menuRef.current) return;
-            if (!menuRef.current.contains(e.target as Node)) setMenuOpen(false);
-        };
-        document.addEventListener('mousedown', handler);
-        return () => document.removeEventListener('mousedown', handler);
-    }, []);
-
-    const handleLogout = async () => {
-        await logout();
-        navigate('/login');
-    };
+    
 
     return (
         <div className="container-dashboard">
-            <header className="topbar">
-                <Link to="/" className="nav-logo-link">
-                          <img
-                            src="/logo-synk.png"
-                            alt="Synk Logo"
-                            className="nav-logo"
-                          />      
-                        </Link>
-
-                <div className="user-area" ref={menuRef}>
-                    <button
-                        className="user-btn"
-                        aria-haspopup="true"
-                        aria-expanded={menuOpen}
-                        onClick={() => setMenuOpen((s) => !s)}
-                    >
-                        <span className="user-initial">
-                            {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
-                        </span>
-                    </button>
-
-                    {menuOpen && (
-                        <div className="user-menu" role="menu">
-                            <Link to="/profile" className="user-menu-item" role="menuitem">Configuración</Link>
-                            <button className="user-menu-item" role="menuitem" onClick={handleLogout}>Cerrar sesión</button>
-                        </div>
-                    )}
-                </div>
-            </header>
+            
 
             <main className="hero">
                 <h1>Empieza a comunicarte de forma mas facil y rapida ahora mismo</h1>
