@@ -1,7 +1,193 @@
 // Variables de color
-$color-primary: #1b2226;
+$bg: #1b2226;
 $color-secondary: #2a3034;
 $white: #ffffff;
-$text-primary: #a8c4c5;
+$text: #a8c4c5;
 $color-card-bg: rgba(255, 255, 255, 0.1);
-$color-buttons: #3ec7cd;
+$accent: #3ec7cd;
+$muted: #a8c4c5;
+$action-width: 420px;
+
+.container-dashboard {
+    min-height: 100vh;
+    background:
+        radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
+        radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
+        #1b2226;
+    color: $text;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+/* Hero */
+.hero {
+    width: 100%;
+    max-width: 980px;
+    margin: 120px auto 30px;
+    padding: 0 1rem;
+    text-align: center;
+
+    h1 {
+        font-size: 2.5rem; // texto grande como en la imagen
+        font-weight: 700;
+    }
+
+    .actions {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.8rem;
+        margin-bottom: 4rem;
+
+        // ambos bloques comparten el mismo ancho
+        .primary-btn,
+        .join-row {
+            width: $action-width;
+            max-width: 100%;
+            box-sizing: border-box;
+        }
+
+        .primary-btn {
+            background: $accent;
+            color: #fff;
+            border: none;
+            padding: 16px 0;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 4rem;
+
+            &:hover {
+                transform: translateY(-2px);
+                filter: brightness(0.95);
+            }
+        }
+
+        .join-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: $color-card-bg;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid $bg;
+
+
+            .join-input {
+                flex: 1;
+                border: none;
+                padding: 12px 12px;
+                border-radius: 8px;
+                background: #f1f1f1;
+                color: $bg;
+                min-width: 0; // evita overflow en mobile
+                font-size: 0.95rem;
+            }
+
+            .join-btn {
+                background: $accent;
+                border: none;
+                color: #fff;
+                padding: 12px 14px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: 700;
+
+                &:hover {
+                    transform: translateY(-2px);
+                    filter: brightness(0.95);
+                }
+            }
+        }
+    }
+
+    .features {
+        display: flex;
+        gap: 4rem;
+        justify-content: center;
+        margin-top: 8rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+
+        .feature {
+            width: 270px;
+            text-align: center;
+            color: $muted;
+
+            h3 {
+                color: $white;
+                margin-top: 18px;
+                font-size: 1.1rem;
+            }
+
+            p {
+                font-size: 0.8rem;
+                margin-top: 8px;
+                line-height: 1.25;
+            }
+
+            .icon-circle {
+                width: 112px;
+                height: 112px;
+                border-radius: 999px;
+                background: #e9e9e9;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto;
+
+                img {
+                    width: 50px;
+                    height: 50px;
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
+
+
+/* Responsive */
+@media (max-width: 760px) {
+
+    .hero {
+        margin: 6rem 1rem;
+
+        h1 {
+            font-size: 1.6rem;
+        }
+
+        .actions {
+
+            .primary-btn,
+            .join-row {
+                width: 100%;
+            }
+
+            .join-row {
+                padding: 6px;
+
+                .join-btn {
+                    padding: 12px 14px;
+                }
+                .join-input {
+                    padding: 12px 12px;
+                }
+            }
+        }
+
+        .features {
+            gap: 4rem;
+
+            .feature {
+                width: 100%;
+                max-width: 320px;
+                margin: 0 auto;
+            }
+        }
+    }
+}

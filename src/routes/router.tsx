@@ -5,6 +5,7 @@ import Home from "../pages/home/Home";
 import Register from "../pages/register/Register";
 import RootLayout from "../layouts/RootLayout";
 import AboutUs from "../pages/about-us/AboutUs";
+import Dashboard from "../pages/dashboard/Dashboard";
 
 
 export const routes = [
@@ -31,6 +32,14 @@ export const routes = [
             {
                 path: "about-us",
                 element: <AboutUs />,
+            },
+            {
+                path: "dashboard",
+                element: <Dashboard />,
+            },
+            {
+                path: "profile",
+                element: <Profile />,
             }
             
         ]

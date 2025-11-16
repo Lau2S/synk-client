@@ -14,13 +14,13 @@ $color-buttons: #3ec7cd;
 }
 
 // Contenedor principal
-.container-login{
+.container-login {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   padding: 6.8rem 1rem 2rem 1rem;
-   background: 
+  background:
     radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
     radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
     #1b2226;
@@ -29,7 +29,7 @@ $color-buttons: #3ec7cd;
   .login-card {
     @include glassmorphism;
     background-color: transparent;
-    padding: 3rem 2.5rem; 
+    padding: 3rem 2.5rem;
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     text-align: center;
@@ -83,7 +83,7 @@ $color-buttons: #3ec7cd;
       }
     }
 
-    .login-button{
+    .login-button {
       margin-top: 1.5rem;
       width: 100%;
       padding: 0.9rem 1rem;
@@ -96,31 +96,31 @@ $color-buttons: #3ec7cd;
       cursor: pointer;
       transition: background-color 0.3s ease;
 
-      &:hover{
-          transform: translateY(-2px);
-          filter: brightness(0.95);
+      &:hover {
+        transform: translateY(-2px);
+        filter: brightness(0.95);
       }
-      
+
     }
 
     .separator {
-        margin: 1rem 0.1rem;
-        display: flex;
-        align-items: center;
-        gap: 10px; // espacio entre líneas y la "o"
-        
-        span {
-            font-weight: 400;
-            color: $text-primary;
-        }
-    
-        &::before,
-        &::after {
-            content: "";
-            flex: 1; // hace que las líneas ocupen todo el espacio disponible
-            height: 1px;
-            background: $text-primary; // color de la línea
-        }
+      margin: 1rem 0.1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px; // espacio entre líneas y la "o"
+
+      span {
+        font-weight: 400;
+        color: $text-primary;
+      }
+
+      &::before,
+      &::after {
+        content: "";
+        flex: 1; // hace que las líneas ocupen todo el espacio disponible
+        height: 1px;
+        background: $text-primary; // color de la línea
+      }
     }
 
     // Opciones de login
@@ -166,16 +166,144 @@ $color-buttons: #3ec7cd;
       margin-top: 1.4rem;
       font-size: 0.9375rem;
       color: $white;
-      
+
       .login-link {
         color: $text-primary;
         text-decoration: underline;
         font-weight: 600;
         transition: color 0.3s ease;
-        
+
         &:hover {
           color: $white;
         }
+      }
+    }
+  }
+}
+
+
+
+/* Modal de recuperar contraseña */
+.forgot-link {
+
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 0.5rem;
+  display: inline-block;
+  background: transparent;
+  color: $text-primary;
+
+  &:hover {
+    color: $white;
+  }
+}
+
+.password-reset-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(24, 24, 24, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .modal-content {
+    @include glassmorphism;
+    position: relative;
+    z-index: 2;
+    width: 420px;
+    max-width: calc(100% - 40px);
+    padding: 2.2rem;
+    border-radius: 18px;
+    text-align: center;
+    color: $white;
+    background-color: $color-primary;
+    ;
+
+    .modal-close-btn {
+      position: absolute;
+      right: 16px;
+      top: 12px;
+      background: transparent;
+      border: none;
+      color: $white;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .modal-title {
+      font-size: 1.9rem;
+      margin-bottom: 0.2rem;
+      font-weight: 700;
+    }
+
+    .modal-subtitle {
+      font-size: 0.95rem;
+      color: $text-primary;
+      margin-bottom: 1rem;
+      margin-top: 1rem;
+    }
+
+    .reset-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin-top: 2rem;
+      
+
+      .reset-input {
+        padding: 1rem 1rem;
+        border-radius: 12px;
+        border: none;
+        background: #efefef;
+        color: $color-primary;
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .reset-send-btn {
+        background: $color-buttons;
+        color: $white;
+        border: none;
+        padding: 0.95rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 1.05rem;
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+      }
+
+      .reset-cancel-btn {
+        background: $white;
+        color: $color-primary;
+        border: 3px solid $color-buttons;
+        padding: 0.9rem;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 1rem;
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+      }
+
+      .reset-info {
+        margin-top: 0.6rem;
+        color: $text-primary;
+        font-size: 0.9rem;
       }
     }
   }

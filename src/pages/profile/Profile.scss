@@ -1,0 +1,326 @@
+$bg: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$accent: #3ec7cd;
+$muted: #a8c4c5;
+$action-width: 420px;
+$color-primary: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text-primary: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$color-buttons: #3ec7cd;
+
+@mixin glassmorphism {
+    background: $color-card-bg;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+
+.container-profile {
+    min-height: 100vh;
+    background:
+        radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
+        radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
+        #1b2226;
+    color: $text;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.profile-card {
+    @include glassmorphism;
+    background-color: transparent;
+    padding: 3rem 2.5rem;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    position: relative;
+    margin-top: 7rem;
+    margin-bottom: 2rem;
+
+    // Título
+    h2 {
+        margin-bottom: 1rem;
+        color: $white;
+        font-size: 2rem;
+    }
+
+    // Descripción
+    p {
+        margin-bottom: 2rem;
+        color: $text-primary;
+        font-size: 1rem;
+    }
+
+
+    .profile-button {
+        margin-top: 1.5rem;
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $white;
+        background-color: $color-buttons;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.95);
+        }
+
+    }
+
+    .profile-button {
+        margin-top: 1.5rem;
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $white;
+        background-color: $color-buttons;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.95);
+        }
+
+    }
+
+    .delete-button {
+        margin-top: 1rem;
+        width: 100%;
+        padding: 0.9rem 1rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: $white;
+        background-color: #707070;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            filter: brightness(0.95);
+        }
+
+    }
+
+    .back-btn {
+        position: absolute;
+        left: 14px;
+        top: 14px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(231, 225, 225, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        color: $white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1rem;
+    }
+
+    .avatar-wrap {
+        margin-top: 8px;
+        margin-bottom: 8px;
+
+        .avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: #fff;
+            color: $color-primary;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            user-select: none;
+            border: 8px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+
+        }
+    }
+
+
+}
+
+.profile-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+
+  .modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(24, 24, 24, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  .modal-content {
+    @include glassmorphism;
+    position: relative;
+    z-index: 2;
+    width: 420px;
+    max-width: calc(100% - 40px);
+    padding: 2rem;
+    border-radius: 18px;
+    text-align: center;
+    color: $white;
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+    background-color: #1b2226;
+
+    .modal-close-btn {
+      position: absolute;
+      right: 12px;
+      top: 10px;
+      background: transparent;
+      border: none;
+      color: $white;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .modal-title {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+      margin-top: 0.2rem;
+      font-weight: 700;
+
+    }
+
+    .modal-subtitle {
+      font-size: 0.95rem;
+      color: $text;
+      margin-bottom: 1rem;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      margin-top: 2rem;
+      
+
+      .modal-input {
+        padding: 1rem;
+        border-radius: 10px;
+        border: none;
+        background: #efefef;
+        color: $color-primary;
+        font-size: 1rem;
+      }
+
+      .modal-primary-btn {
+        background: $accent;
+        color: $white;
+        border: none;
+        padding: 0.95rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 1.05rem;
+        margin-top: 1rem;
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+      }
+
+      .modal-danger-btn {
+        background: #e74c3c;
+        color: $white;
+        border: none;
+        padding: 0.95rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 1.05rem;
+        margin-top: 2rem;
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+      }
+
+      .modal-cancel-btn {
+        background: $white;
+        color: $color-primary;
+        padding: 0.9rem;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 1rem;
+
+        &:hover {
+          transform: translateY(-2px);
+          filter: brightness(0.95);
+        }
+      }
+
+      .modal-info {
+        margin-top: 0.4rem;
+        color: $text;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+/* responsive tweaks */
+@media (max-width: 520px) {
+  .profile-modal .modal-content {
+    padding: 1.4rem;
+    width: calc(100% - 32px);
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 520px) {
+    .profile-card {
+        padding: 1.6rem 1.2rem;
+        border-radius: 10px;
+    }
+
+    .avatar {
+        width: 92px;
+        height: 92px;
+    }
+
+    .profile-name {
+        font-size: 1.3rem;
+    }
+
+    .profile-info {
+        max-width: 100%;
+
+        .label {
+            width: 64px;
+        }
+    }
+}

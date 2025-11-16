@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { signInWithPopup, signOut, onAuthStateChanged } from 'firebase/auth'
+import { signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth'
 import { auth, googleProvider } from '../lib/firebase.config';
 
 interface User {
@@ -14,6 +14,7 @@ type AuthStore = {
    initAuthObserver: () => () => void,
    loginWithGoogle: () => Promise<void>,
    logout: () => Promise<void>,
+   resetPassword?: (email: string) => Promise<void>,
 }
 
 const useAuthStore = create<AuthStore>()((set) => ({
@@ -56,7 +57,17 @@ const useAuthStore = create<AuthStore>()((set) => ({
         } catch (e: any) {
             console.error(e);
         }
+    },
+
+    resetPassword: async (email: string) => {
+        try {
+            await sendPasswordResetEmail(auth, email);
+        } catch (e: any) {
+            console.error('resetPassword error:', e);
+            throw e;
+        }
     }
+    
 }))
 
 export default useAuthStore;
