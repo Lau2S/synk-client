@@ -28,7 +28,7 @@ const Navbar: React.FC = () => {
         <div className="nav-links">
           <Link to="/">Inicio</Link>
           <Link to="/about-us">Sobre Nosotros</Link>
-          <Link to="/mapa-del-sitio">Mapa del Sitio</Link>
+          <Link to="/site-map">Mapa del Sitio</Link>
         </div>
         
         {/* Auth Buttons - Always visible */}

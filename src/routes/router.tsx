@@ -6,6 +6,7 @@ import Register from "../pages/register/Register";
 import RootLayout from "../layouts/RootLayout";
 import AboutUs from "../pages/about-us/AboutUs";
 import Dashboard from "../pages/dashboard/Dashboard";
+import SiteMap from "../pages/site-map/SiteMap";
 
 
 export const routes = [
@@ -40,7 +41,12 @@ export const routes = [
             {
                 path: "profile",
                 element: <Profile />,
+            },
+            {
+                path: "site-map",
+                element: <SiteMap />,
             }
+            
             
         ]
     }
