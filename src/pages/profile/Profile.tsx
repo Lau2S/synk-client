@@ -13,8 +13,8 @@ const Profile: React.FC = () => {
 
     // server profile (fetched)
     const [profile, setProfile] = useState<any | null>(null);
-    const [loadingProfile, setLoadingProfile] = useState(false);
-    const [loadError, setLoadError] = useState<string | null>(null);
+    const [, setLoadingProfile] = useState(false);
+    const [, setLoadError] = useState<string | null>(null);
 
     // modales / formularios
     const [showEdit, setShowEdit] = useState(false);
