@@ -1,21 +1,29 @@
-import React, { useState } from 'react'
+
+import React, { useEffect, useState } from 'react'
 import useAuthStore from '../../stores/useAuthStore'
 import { useNavigate } from 'react-router-dom';
 import './Profile.scss';
+import { getMe, updateUser, deleteUser } from '../../api/users';
 
 const Profile: React.FC = () => {
     const navigate = useNavigate();
     const logout = useAuthStore((s) => s.logout);
-    const user = useAuthStore((s) => s.user);
+    const storeUser = useAuthStore((s) => s.user);
     const setUser = useAuthStore((s) => s.setUser);
+
+    // server profile (fetched)
+    const [profile, setProfile] = useState<any | null>(null);
+    const [, setLoadingProfile] = useState(false);
+    const [, setLoadError] = useState<string | null>(null);
 
     // modales / formularios
     const [showEdit, setShowEdit] = useState(false);
     const [showDelete, setShowDelete] = useState(false);
 
-    const [editName, setEditName] = useState(user?.displayName ?? '');
+    const [editFirstName, setEditFirstName] = useState('');
     const [editLastName, setEditLastName] = useState('');
-    const [editAge, setEditAge] = useState((user as any)?.age ?? '');
+    const [editEmail, setEditEmail] = useState('');
+    const [editAge, setEditAge] = useState<number | ''>('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [editSending, setEditSending] = useState(false);
@@ -25,12 +33,33 @@ const Profile: React.FC = () => {
     const [deleteSending, setDeleteSending] = useState(false);
     const [deleteMsg, setDeleteMsg] = useState('');
 
-    
+    // load profile on mount (or when store user changes)
+    useEffect(() => {
+        const load = async () => {
+            setLoadingProfile(true);
+            setLoadError(null);
+            try {
+                const data = await getMe();
+                setProfile(data);
+                // populate form defaults
+                setEditFirstName(data?.firstName ?? '');
+                setEditLastName(data?.lastName ?? '');
+                setEditEmail(data?.email ?? '');
+                setEditAge(typeof data?.age === 'number' ? data.age : (data?.age ? Number(data.age) : ''));
+            } catch (err: any) {
+                setLoadError(err?.message || err?.response?.message || 'No se pudo cargar el perfil');
+            } finally {
+                setLoadingProfile(false);
+            }
+        };
+        load();
+    }, [storeUser]);
 
     const handleEditOpen = () => {
-        setEditName(user?.displayName ?? '');
-        setEditLastName('');
-        setEditAge((user as any)?.age ?? '');
+        setEditFirstName(profile?.firstName ?? '');
+        setEditLastName(profile?.lastName ?? '');
+        setEditEmail(profile?.email ?? '');
+        setEditAge(typeof profile?.age === 'number' ? profile.age : (profile?.age ? Number(profile.age) : ''));
         setNewPassword('');
         setConfirmPassword('');
         setEditMsg('');
@@ -43,24 +72,41 @@ const Profile: React.FC = () => {
             setEditMsg('Las contraseñas no coinciden.');
             return;
         }
+        if (!profile?.id) {
+            setEditMsg('Perfil no cargado');
+            return;
+        }
         setEditSending(true);
         setEditMsg('');
         try {
-            // Simulación: actualiza el store localmente. Reemplazar por llamada real a backend/firebase si aplica
-            const newDisplay = [editName, editLastName].filter(Boolean).join(' ') || user?.displayName || null;
-            setUser({
-                displayName: newDisplay,
-                email: user?.email ?? null,
-                photoURL: user?.photoURL ?? null,
-            });
-            // si necesitas guardar edad u contraseña, añadir llamada real aquí
+            const payload: any = {
+                firstName: editFirstName,
+                lastName: editLastName,
+                age: editAge === '' ? undefined : Number(editAge),
+            };
+            // if you want backend to handle password change, include newPassword (ensure backend supports it)
+            if (newPassword) payload.password = newPassword;
+            if (editEmail && editEmail !== profile?.email) payload.email = editEmail;
+
+            await updateUser(profile.id, payload);
+            // refresh profile
+            const refreshed = await getMe();
+            setProfile(refreshed);
+            // update store user displayName/email/photo if needed
+            if (setUser) {
+                setUser({
+                    displayName: `${refreshed.firstName ?? ''} ${refreshed.lastName ?? ''}`.trim() || storeUser?.displayName,
+                    email: refreshed.email ?? storeUser?.email,
+                    photoURL: refreshed.photo ?? storeUser?.photoURL,
+                } as any);
+            }
             setEditMsg('Perfil actualizado.');
             setTimeout(() => {
                 setShowEdit(false);
                 setEditMsg('');
             }, 900);
-        } catch (err) {
-            setEditMsg('No se pudo actualizar, intenta de nuevo.');
+        } catch (err: any) {
+            setEditMsg(err?.message || err?.response?.message || 'No se pudo actualizar, intenta de nuevo.');
         } finally {
             setEditSending(false);
         }
@@ -72,24 +118,26 @@ const Profile: React.FC = () => {
             setDeleteMsg('Ingresa tu contraseña para confirmar.');
             return;
         }
+        if (!profile?.id) {
+            setDeleteMsg('Perfil no cargado.');
+            return;
+        }
         setDeleteSending(true);
         setDeleteMsg('');
         try {
-            // Simulación de eliminación: en producción llamar a la API o reautenticación + eliminación
-            // Aquí sólo desloguea y redirige
-            await new Promise((res) => setTimeout(res, 900));
+            // if backend requires re-auth, call appropriate endpoint; here we call DELETE /users/:id
+            await deleteUser(profile.id);
+            // logout and clear store
             await logout();
-            
-            
+            if (setUser) setUser(null as any);
             navigate('/');
-        } catch (err) {
-            setDeleteMsg('No se pudo eliminar la cuenta. Intenta de nuevo.');
+        } catch (err: any) {
+            setDeleteMsg(err?.message || err?.response?.message || 'No se pudo eliminar la cuenta. Intenta de nuevo.');
             setDeleteSending(false);
         }
     };
 
     const handleEdit = () => handleEditOpen();
-
     const handleDelete = () => {
         setDeletePassword('');
         setDeleteMsg('');
@@ -104,21 +152,21 @@ const Profile: React.FC = () => {
 
                     <div className="avatar-wrap">
                         <span className="avatar">
-                            {user?.displayName ? user.displayName.charAt(0).toUpperCase() : 'U'}
+                            {profile?.firstName ? profile.firstName.charAt(0).toUpperCase() : (storeUser?.displayName ? storeUser.displayName.charAt(0).toUpperCase() : 'U')}
                         </span>
                     </div>
 
-                    <h2 className="profile-name">{user?.displayName ?? 'Mi nombre'}</h2>
+                    <h2 className="profile-name">{profile ? `${profile.firstName ?? ''} ${profile.lastName ?? ''}`.trim() : (storeUser?.displayName ?? 'Mi nombre')}</h2>
 
                     <div className="profile-info">
                         <div className="info-row">
                             <span className="label">Email:</span>
-                            <span className="value">{user?.email ?? '—'}</span>
+                            <span className="value">{profile?.email ?? storeUser?.email ?? '—'}</span>
                         </div>
 
                         <div className="info-row">
                             <span className="label">Edad:</span>
-                            <span className="value">{(user as any)?.age ?? '—'}</span>
+                            <span className="value">{profile?.age ?? (storeUser as any)?.age ?? '—'}</span>
                         </div>
                     </div>
 
@@ -139,9 +187,10 @@ const Profile: React.FC = () => {
                         <p className="modal-subtitle">Deja en blanco para mantener tu contraseña actual</p>
 
                         <form className="modal-form" onSubmit={handleEditSubmit}>
-                            <input value={editName} onChange={(e) => setEditName(e.target.value)} placeholder="Mi nombre" className="modal-input" />
-                            <input value={editLastName} onChange={(e) => setEditLastName(e.target.value)} placeholder="Mi apellido" className="modal-input" />
-                            <input value={String(editAge)} onChange={(e) => setEditAge(e.target.value)} placeholder="Mi edad" className="modal-input" />
+                            <input value={editFirstName} onChange={(e) => setEditFirstName(e.target.value)} placeholder="Nombre" className="modal-input" />
+                            <input value={editLastName} onChange={(e) => setEditLastName(e.target.value)} placeholder="Apellido" className="modal-input" />
+                            <input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} type="email" placeholder="Email" className="modal-input" />
+                            <input value={String(editAge)} onChange={(e) => setEditAge(e.target.value === '' ? '' : Number(e.target.value))} placeholder="Edad" className="modal-input" />
                             <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="Nueva Contraseña" className="modal-input" />
                             <input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" placeholder="Confirmar nueva contraseña" className="modal-input" />
 
@@ -182,3 +231,5 @@ const Profile: React.FC = () => {
 }
 
 export default Profile
+
+//change to commit
