@@ -1,0 +1,203 @@
+// Variables de color
+$color-primary: #1b2226;
+$color-secondary: #2a3034;
+$white: #ffffff;
+$text-primary: #a8c4c5;
+$color-card-bg: rgba(255, 255, 255, 0.1);
+$color-buttons: #3ec7cd;
+
+.site-map-container {
+    display: flex;
+    flex-direction:column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+      // Fondo con gradiente
+    background: 
+    radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
+    radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
+    #1b2226;
+    padding: 6rem 7rem;
+    gap: 2rem;
+
+
+    .titles{
+        text-align: center;
+        h1{
+            color: $white;
+            font-size: 3rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        p{
+            color: $text-primary;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        
+        }
+    }
+
+
+    .site-map-content{
+        display: grid;
+        justify-content: center;
+        align-items: center;
+        grid-template-columns: repeat(2, 1fr);   /* 2 columnas */
+        width: 100%;         // MUY importante
+        max-width: 1200px;     // para que no se estiren demasiado
+        margin: 0 auto;  
+        gap: 4rem; 
+
+        .site-map-box{
+            background: #e9e9e9;
+            height: 250px;
+            backdrop-filter: blur(20px);
+            border: 2px solid $text-primary;
+            border-radius: 10px;
+            padding: 1.5rem 3rem;
+
+            h2{
+                color: $color-secondary;
+                text-align: center;
+                font-size: 1.6rem;
+                margin-bottom: 1.6rem;
+                font-weight: 700;
+            }
+
+            ul{
+                list-style-type: none;
+                padding: 0;
+
+                li{
+                    margin-bottom: 0.8rem;
+                    font-size: 1.1rem;
+                    color: $color-secondary;
+                    opacity: 0.7;
+                    cursor: pointer;
+
+                    &:hover{
+                            text-decoration: underline;
+                        }
+                }
+            }
+
+        }
+    }
+
+
+
+    // Responsive Site Map
+    @media (max-width: 1200px) {
+        padding: 6rem 4rem;
+
+        .titles {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+
+        .site-map-content {
+            gap: 3rem;
+            max-width: 1000px;
+
+            .site-map-box {
+                height: auto;
+                min-height: 240px;
+                padding: 1.5rem 2.5rem;
+
+                h2 {
+                    font-size: 1.5rem;
+                }
+
+                ul li {
+                    font-size: 1rem;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 968px) {
+        padding: 6rem 2rem;
+        gap: 1.5rem;
+
+        .titles {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+                padding: 0 1rem;
+            }
+        }
+
+        .site-map-content {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            max-width: 500px;
+
+            .site-map-box {
+                height: auto;
+                min-height: auto;
+                padding: 1.5rem 2rem;
+
+                h2 {
+                    font-size: 1.4rem;
+                    margin-bottom: 1.3rem;
+                }
+
+                ul li {
+                    font-size: 1rem;
+                    margin-bottom: 0.7rem;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 640px) {
+        padding: 6rem 1.5rem 3rem 1.5rem;
+
+        .titles {
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 0.8rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+                padding: 0;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .site-map-content {
+            gap: 1.5rem;
+
+            .site-map-box {
+                padding: 1.3rem 1.5rem;
+
+                h2 {
+                    font-size: 1.3rem;
+                    margin-bottom: 1.2rem;
+                }
+
+                ul li {
+                    font-size: 0.95rem;
+                    margin-bottom: 0.6rem;
+                }
+            }
+        }
+    }
+
+
+
+
+
+}
+
