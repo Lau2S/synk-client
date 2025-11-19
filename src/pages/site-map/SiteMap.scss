@@ -88,6 +88,116 @@ $color-buttons: #3ec7cd;
 
 
 
+    // Responsive Site Map
+    @media (max-width: 1200px) {
+        padding: 6rem 4rem;
+
+        .titles {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+        }
+
+        .site-map-content {
+            gap: 3rem;
+            max-width: 1000px;
+
+            .site-map-box {
+                height: auto;
+                min-height: 240px;
+                padding: 1.5rem 2.5rem;
+
+                h2 {
+                    font-size: 1.5rem;
+                }
+
+                ul li {
+                    font-size: 1rem;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 968px) {
+        padding: 6rem 2rem;
+        gap: 1.5rem;
+
+        .titles {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            p {
+                font-size: 0.95rem;
+                padding: 0 1rem;
+            }
+        }
+
+        .site-map-content {
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            max-width: 500px;
+
+            .site-map-box {
+                height: auto;
+                min-height: auto;
+                padding: 1.5rem 2rem;
+
+                h2 {
+                    font-size: 1.4rem;
+                    margin-bottom: 1.3rem;
+                }
+
+                ul li {
+                    font-size: 1rem;
+                    margin-bottom: 0.7rem;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 640px) {
+        padding: 6rem 1.5rem 3rem 1.5rem;
+
+        .titles {
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 0.8rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+                padding: 0;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        .site-map-content {
+            gap: 1.5rem;
+
+            .site-map-box {
+                padding: 1.3rem 1.5rem;
+
+                h2 {
+                    font-size: 1.3rem;
+                    margin-bottom: 1.2rem;
+                }
+
+                ul li {
+                    font-size: 0.95rem;
+                    margin-bottom: 0.6rem;
+                }
+            }
+        }
+    }
+
+
+
 
 
 }
+

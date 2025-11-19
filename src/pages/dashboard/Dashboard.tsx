@@ -3,8 +3,11 @@ import './Dashboard.scss';
 import CameraIcon from '/logos/camera.svg?url';
 import CodeIcon from '/logos/code.svg?url';
 import LockIcon from '/logos/lock.svg?url';
+import { useNavigate } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
+
+    const navigate = useNavigate();
     
 
     return (
@@ -15,7 +18,7 @@ const Dashboard: React.FC = () => {
                 <h1>Empieza a comunicarte de forma mas facil y rapida ahora mismo</h1>
 
                 <div className="actions">
-                    <button className="primary-btn">Crear reunión</button>
+                    <button className="primary-btn" onClick={() => navigate('/meeting')}>Crear reunión</button>
 
                     <div className="join-row">
                         <input className="join-input" placeholder="Ingrese el ID de la reunión" />
