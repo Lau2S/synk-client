@@ -5,13 +5,24 @@ import NavbarDashboard from "../components/navbar/NavbarDashboard";
 import Footer from "../components/footer/Footer";
 
 /**
- * Root layout component that wraps all pages with the Navbar and Footer.
- * This ensures the Navbar and Footer appear on every route by default.
+ * RootLayout component — application layout wrapper.
+ *
+ * Renders a navbar (public or authenticated variant), the current route's
+ * outlet and a footer. The component uses the current location to decide
+ * which navbar to render:
+ * - NavbarDashboard is used for routes that start with /dashboard or /profile.
+ * - Navbar (public) is used for all other routes.
+ *
+ * No props.
+ *
+ * @component
+ * @returns {JSX.Element} The layout containing the selected navbar, Outlet and Footer.
  */
+
 const RootLayout: React.FC = () => {
   const location = useLocation();
 
-  // Selección condicional del Navbar según la ruta
+  // Determine if the current route belongs to the authenticated dashboard/profile area.
   const isDashboard = location.pathname.startsWith("/dashboard");
   const isProfile = location.pathname.startsWith("/profile");
   const useAuthNavbar = isDashboard || isProfile;

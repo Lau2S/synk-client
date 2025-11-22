@@ -2,8 +2,27 @@ import React from "react";
 import './AboutUs.scss';
 import { useNavigate } from "react-router-dom";
 
+/**
+ * AboutUs page component.
+ *
+ * Displays information about the project and the team, and exposes a button
+ * that navigates the user to the login page.
+ *
+ * No props.
+ *
+ * @component
+ * @returns {JSX.Element} The About Us page markup.
+ */
+
 const AboutUs: React.FC = () => {
     const navigate = useNavigate();
+
+    /**
+     * Navigate to the login route.
+     *
+     * @returns {void}
+     */
+
     return (
         <div className='container-about-us'>
             <div className="main-container">

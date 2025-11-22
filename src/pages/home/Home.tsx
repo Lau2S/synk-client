@@ -2,8 +2,24 @@ import React from 'react';
 import './Home.scss';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Home page component.
+ *
+ * Shows marketing text and a call-to-action button that redirects users to the
+ * login page. No props.
+ *
+ * @component
+ * @returns {JSX.Element} The Home page markup.
+ */
+
 const Home: React.FC = () => {
     const navigate = useNavigate();
+
+    /**
+     * Navigate to the login route when the CTA button is clicked.
+     *
+     * @returns {void}
+     */
 
     return (
         <div className='container-home'>

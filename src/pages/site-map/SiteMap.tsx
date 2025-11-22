@@ -2,6 +2,19 @@ import React from "react";
 import "./SiteMap.scss";
 import { Link } from "react-router-dom";
 
+/**
+ * SiteMap page component.
+ *
+ * Renders a sitemap with grouped links for main navigation, user actions,
+ * meetings and profile-related pages. Intended to help users and crawlers
+ * discover available routes.
+ *
+ * No props.
+ *
+ * @component
+ * @returns {JSX.Element} Sitemap page markup.
+ */
+
 const SiteMap: React.FC = () =>   {
     return (
         <div className="site-map-container">

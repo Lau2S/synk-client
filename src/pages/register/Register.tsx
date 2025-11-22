@@ -5,6 +5,21 @@ import './Register.scss';
 import { createUser } from '../../api/users';
 import { registerUser } from '../../api/users';
 
+/**
+ * Register page component.
+ *
+ * Provides a registration form (name, last name, age, email, password) and
+ * social sign-up via Google/Facebook. On successful registration the user is
+ * redirected to the login page.
+ *
+ * Uses the auth store's initAuthObserver to initialize auth state if available.
+ *
+ * No props.
+ *
+ * @component
+ * @returns {JSX.Element} Registration page markup and behavior.
+ */
+
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const { loginWithGoogle, initAuthObserver } = useAuthStore();
@@ -18,16 +33,40 @@ const Register: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  /**
+   * Initialize authentication observer on mount if provided by the auth store.
+   * The observer cleanup is returned to the effect cleanup.
+   */
+
   useEffect(() => {
     if (!initAuthObserver) return;
     const unsub = initAuthObserver();
     return () => unsub?.();
   }, [initAuthObserver]);
 
+  /**
+   * Trigger Google (or social) sign-up flow and navigate to profile on success.
+   *
+   * @param {React.FormEvent} e - Event from the social button click.
+   * @returns {void}
+   */
+
   const handleLoginGoogle = (e: React.FormEvent) => {
     e.preventDefault();
     loginWithGoogle().then(() => navigate('/profile'));
   };
+
+  /**
+   * Handle registration form submit.
+   *
+   * - Validates required fields and password confirmation.
+   * - Builds payload matching backend expected shape.
+   * - Calls registerUser (public register endpoint) and navigates to /login on success.
+   *
+   * @param {React.FormEvent} e - Form submit event.
+   * @async
+   * @returns {Promise<void>}
+   */
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
