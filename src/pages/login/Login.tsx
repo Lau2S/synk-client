@@ -5,6 +5,21 @@ import { useEffect, useState } from 'react';
 import './Login.scss';
 import { loginUser } from '../../api/users'; // 
 
+/**
+ * Login page component.
+ *
+ * Renders the login form, social login buttons and a password reset modal.
+ * Handles:
+ * - Email/password login via backend (loginUser).
+ * - Google/Facebook login via the auth store's loginWithGoogle.
+ * - Password reset flow using resetPassword from the auth store (if provided).
+ *
+ * No props.
+ *
+ * @component
+ * @returns {JSX.Element} The login page markup and behavior.
+ */
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { loginWithGoogle, initAuthObserver, resetPassword, setUser } = useAuthStore();
@@ -19,6 +34,17 @@ const Login: React.FC = () => {
   const [sending, setSending] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
 
+  /**
+   * Handle form submit for email/password login.
+   *
+   * Calls backend loginUser, stores returned token in localStorage and updates
+   * the auth store's user if available. Navigates to /dashboard on success.
+   *
+   * @param {React.FormEvent} e - Form submit event.
+   * @returns {Promise<void>}
+   */
+
+
   const handleLogin = async (e: React.FormEvent) => {
    e.preventDefault();
    setError(null);
@@ -30,13 +56,13 @@ const Login: React.FC = () => {
 
    setLoading(true);
    try {
-     // llama al backend -> { token, user, ... }
+     // call backend -> { token, user, ... }
      const res = await loginUser({ email, password });
-     // guarda token devuelto por el backend
+     // save token returned by backend
      if (res?.token) {
        localStorage.setItem('token', res.token);
      }
-     // actualiza el store de usuario si existe la función
+     // update user store if function exists
      if (res?.user && typeof setUser === 'function') {
        setUser(res.user);
      }
@@ -47,6 +73,15 @@ const Login: React.FC = () => {
      setLoading(false);
    }
  };
+
+  /**
+   * Handle sending a password reset request.
+   *
+   * Uses resetPassword from the auth store when present, otherwise no-op.
+   *
+   * @param {React.FormEvent} e - Form submit event.
+   * @returns {Promise<void>}
+   */
 
   const handleSendReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,10 +104,23 @@ const Login: React.FC = () => {
     }
   };
 
+  /**
+   * Trigger social login (Google / Facebook) via the auth store and navigate
+   * to the dashboard on success.
+   *
+   * @param {React.MouseEvent<HTMLButtonElement>=} e - Click event (optional).
+   * @returns {void}
+   */
+
   const handleLoginGoogle = (e?: React.MouseEvent<HTMLButtonElement>) => {
     if (e) e.preventDefault();
     loginWithGoogle().then(() => navigate('/dashboard'));
   };
+
+  /**
+   * Initialize auth observer on mount if provided by the auth store.
+   * Returns the unsubscribe function in the effect cleanup.
+   */
 
   useEffect(() => {
     if (!initAuthObserver) return;

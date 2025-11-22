@@ -5,6 +5,24 @@ import { useNavigate } from 'react-router-dom';
 import './Profile.scss';
 import { getMe, updateUser, deleteUser } from '../../api/users';
 
+/**
+ * Profile page component.
+ *
+ * Shows the authenticated user's profile, allows editing profile fields,
+ * and provides account deletion. Fetches the server profile via getMe on mount
+ * and when the store user changes.
+ *
+ * Behavior:
+ * - Edit modal: update profile and optionally change password.
+ * - Delete modal: confirm deletion, call deleteUser, then logout and redirect.
+ *
+ * No props.
+ *
+ * @component
+ * @returns {JSX.Element} Profile page markup and behavior.
+ */
+
+
 const Profile: React.FC = () => {
     const navigate = useNavigate();
     const logout = useAuthStore((s) => s.logout);
@@ -33,7 +51,10 @@ const Profile: React.FC = () => {
     const [deleteSending, setDeleteSending] = useState(false);
     const [deleteMsg, setDeleteMsg] = useState('');
 
-    // load profile on mount (or when store user changes)
+    /**
+     * Load profile from server on mount and when store user changes.
+     * Populates local form state with fetched values.
+     */
     useEffect(() => {
         const load = async () => {
             setLoadingProfile(true);
@@ -55,6 +76,10 @@ const Profile: React.FC = () => {
         load();
     }, [storeUser]);
 
+    /**
+     * Open edit modal and populate fields with current profile data.
+     */
+
     const handleEditOpen = () => {
         setEditFirstName(profile?.firstName ?? '');
         setEditLastName(profile?.lastName ?? '');
@@ -65,6 +90,18 @@ const Profile: React.FC = () => {
         setEditMsg('');
         setShowEdit(true);
     };
+
+    /**
+     * Submit profile edits to the backend.
+     *
+     * - Validates password confirmation if changing password.
+     * - Builds payload and calls updateUser.
+     * - Refreshes profile via getMe and updates auth store displayName/email if setter exists.
+     *
+     * @param {React.FormEvent} e - Form submit event.
+     * @async
+     * @returns {Promise<void>}
+     */
 
     const handleEditSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -111,6 +148,17 @@ const Profile: React.FC = () => {
             setEditSending(false);
         }
     };
+
+    /**
+     * Submit account deletion.
+     *
+     * - Validates password presence and profile id.
+     * - Calls deleteUser and on success logs out, clears store user and navigates to home.
+     *
+     * @param {React.FormEvent|undefined} e - Optional form event.
+     * @async
+     * @returns {Promise<void>}
+     */
 
     const handleDeleteSubmit = async (e?: React.FormEvent) => {
         if (e) e.preventDefault();
@@ -231,5 +279,3 @@ const Profile: React.FC = () => {
 }
 
 export default Profile
-
-//change to commit

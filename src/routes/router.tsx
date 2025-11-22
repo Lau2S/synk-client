@@ -9,6 +9,19 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import SiteMap from "../pages/site-map/SiteMap";
 import Meeting from "../pages/meeting/Meeting";
 
+/**
+ * Application routes configuration.
+ *
+ * The `routes` array defines the route tree used by react-router. The root
+ * path renders the RootLayout which contains nested routes:
+ * - index -> Home
+ * - login, register, profile, about-us, dashboard, site-map, meeting
+ *
+ * Each route object follows react-router's RouteObject shape. This file
+ * exports both `routes` and a `router` created with createBrowserRouter.
+ *
+ * @type {import('react-router').RouteObject[]}
+ */
 
 export const routes = [
     {
@@ -56,5 +69,13 @@ export const routes = [
         ]
     }
 ]
+
+/**
+ * Browser router instance created from the route configuration.
+ *
+ * Use this `router` with <RouterProvider router={router} /> in the app entry.
+ *
+ * @type {import('react-router-dom').Router}
+ */
 
 export const router = createBrowserRouter(routes);

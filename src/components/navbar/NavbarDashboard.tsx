@@ -4,6 +4,21 @@ import { Link, useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/useAuthStore";
 import "./NavbarDashboard.scss";
 
+/**
+ * NavbarDashboard component - top navigation used in authenticated dashboard pages.
+ *
+ * Responsibilities:
+ * - Render app logo linking to /dashboard.
+ * - Show a user button with the user's initial (fallback "U").
+ * - Toggle a small user menu with links for profile/settings and logout.
+ * - Close the menu when clicking outside of it.
+ *
+ * No props. Uses the auth store for user state and logout action.
+ *
+ * @component
+ * @returns {JSX.Element} Navbar element for dashboard layout.
+ */
+
 const NavbarDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const logout = useAuthStore((s) => s.logout);
@@ -11,6 +26,12 @@ const NavbarDashboard: React.FC = () => {
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
+
+	/**
+     * Close the menu when clicking outside the menu container.
+     *
+     * The effect attaches a 'mousedown' listener on mount and removes it on unmount.
+     */
 
 	useEffect(() => {
 		const handler = (e: MouseEvent) => {
@@ -20,6 +41,13 @@ const NavbarDashboard: React.FC = () => {
 		document.addEventListener("mousedown", handler);
 		return () => document.removeEventListener("mousedown", handler);
 	}, []);
+
+	/**
+     * Perform logout via the auth store and navigate to the login page.
+     *
+     * @async
+     * @returns {Promise<void>}
+     */
 
 	const handleLogout = async () => {
 		await logout();

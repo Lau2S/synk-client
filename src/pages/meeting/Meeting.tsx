@@ -2,11 +2,38 @@ import React, { useState } from 'react';
 import './Meeting.scss';
 import { useNavigate } from 'react-router-dom';
 
+/**
+ * Participant representation used in the meeting UI.
+ *
+ * @typedef {Object} Participant
+ * @property {number} id - Unique participant identifier.
+ * @property {string} name - Full display name.
+ * @property {string} initial - Single-character initial shown in avatar.
+ */
+
 interface Participant {
   id: number;
   name: string;
   initial: string;
 }
+
+/**
+ * Meeting page component.
+ *
+ * Renders a grid of participant video placeholders, an optional chat panel,
+ * and meeting controls (microphone, camera, hang up, chat toggle).
+ *
+ * Local state:
+ * - isChatOpen: whether the chat panel is visible.
+ * - chatMessage: current text in the chat input.
+ * - messages: list of chat messages shown in the chat panel.
+ * - isMicOn / isCameraOn: booleans for mic/camera toggle UI.
+ *
+ * No props.
+ *
+ * @component
+ * @returns {JSX.Element} The meeting UI.
+ */
 
 const Meeting: React.FC = () => {
   const navigate = useNavigate();
@@ -23,6 +50,16 @@ const Meeting: React.FC = () => {
     { id: 4, name: 'Gabriela Guzman', initial: 'G' },
     { id: 5, name: 'Laura Salazar', initial: 'L' },
   ];
+
+  /**
+   * Handle sending a chat message.
+   *
+   * Appends a new message to the messages array with the current time and
+   * clears the input. Prevents default form submission behavior.
+   *
+   * @param {React.FormEvent} e - Form submit event.
+   * @returns {void}
+   */
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();

@@ -5,6 +5,19 @@ import CodeIcon from '/logos/code.svg?url';
 import LockIcon from '/logos/lock.svg?url';
 import { useNavigate } from "react-router-dom";
 
+/**
+ * Dashboard page component.
+ *
+ * Displays a hero section with actions to create a meeting or join one by ID,
+ * and a list of feature cards. Uses `useNavigate` to:
+ * - navigate to '/meeting' when creating a meeting.
+ *
+ * Note: the join input currently has no submit handler in this component.
+ *
+ * @component
+ * @returns {JSX.Element} The Dashboard page markup.
+ */
+
 const Dashboard: React.FC = () => {
 
     const navigate = useNavigate();
