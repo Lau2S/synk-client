@@ -22,7 +22,7 @@ import { registerUser } from '../../api/users';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { loginWithGoogle, initAuthObserver } = useAuthStore();
+  const { initAuthObserver } = useAuthStore();
 
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -43,18 +43,6 @@ const Register: React.FC = () => {
     const unsub = initAuthObserver();
     return () => unsub?.();
   }, [initAuthObserver]);
-
-  /**
-   * Trigger Google (or social) sign-up flow and navigate to profile on success.
-   *
-   * @param {React.FormEvent} e - Event from the social button click.
-   * @returns {void}
-   */
-
-  const handleLoginGoogle = (e: React.FormEvent) => {
-    e.preventDefault();
-    loginWithGoogle().then(() => navigate('/profile'));
-  };
 
   /**
    * Handle registration form submit.
@@ -92,7 +80,6 @@ const Register: React.FC = () => {
         age: age === '' ? undefined : Number(age)
       };
 
--      await createUser(payload);
 +      await registerUser(payload);
 
       navigate('/login');
@@ -189,28 +176,6 @@ const Register: React.FC = () => {
             {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
-
-        <div className="separator"><span>o</span></div>
-
-        <div className="register-options">
-          <button
-            className="google-register-button"
-            onClick={handleLoginGoogle}
-            type="button"
-          >
-            <img src="logos/google-logo.png" alt="Registrarse con Google" />
-            <span>Usa Google</span>
-          </button>
-
-          <button
-            className="facebook-register-button"
-            onClick={handleLoginGoogle}
-            type="button"
-          >
-            <img src="logos/facebook-logo.png" alt="Registrarse con Facebook" />
-            <span>Usa Facebook</span>
-          </button>
-        </div>
 
         <div className="register-prompt">
           <span>¿Ya tienes una cuenta? </span>

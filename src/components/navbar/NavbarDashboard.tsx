@@ -78,7 +78,7 @@ const NavbarDashboard: React.FC = () => {
 				{menuOpen && (
 					<div className="user-menu" role="menu">
 						<Link to="/profile" className="user-menu-item" role="menuitem">
-							Configuración
+							Perfil
 						</Link>
 						<button
 							className="user-menu-item"

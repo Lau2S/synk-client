@@ -42,34 +42,65 @@ const AboutUs: React.FC = () => {
                 <button onClick={() => navigate('/login')}>Acceder</button>
             </div>
 
-            <h2>Nuestro Equipo</h2>
-
-            <div className="content-group">
-                <div className="box">
-                    <h3>Valentina Sanchez</h3>
-                    <p>Front Developer</p>
-                </div>
-
-                <div className="box">
-                    <h3>Juliana Bolaños</h3>
-                    <p>Back Developer</p>
-                </div>
-
-                <div className="box">
-                    <h3>Juan <br />Moreno</h3>
-                    <p>Front Developer</p>
-                </div>
-
-                <div className="box">
-                    <h3>Gabriela Guzman</h3>
-                    <p>Back Developer</p>
-                </div>
-
-                <div className="box">
-                    <h3>Laura <br />Salazar</h3>
-                    <p>Front Developer</p>
-                </div>
+            <div className="team-section">
+                <h2>Nuestro Equipo</h2>
                 
+                <div className="team-grid">
+                    <div className="team-member">
+                        <div className="member-avatar">
+                            <span className="avatar-text">VS</span>
+                            <div className="member-role-badge frontend">Frontend</div>
+                        </div>
+                        <div className="member-info">
+                            <h3>Valentina Sanchez</h3>
+                            <p>Front Developer</p>
+                        </div>
+                    </div>
+
+                    <div className="team-member">
+                        <div className="member-avatar">
+                            <span className="avatar-text">JB</span>
+                            <div className="member-role-badge backend">Backend</div>
+                        </div>
+                        <div className="member-info">
+                            <h3>Juliana Bolaños</h3>
+                            <p>Back Developer</p>
+                        </div>
+                    </div>
+
+                    <div className="team-member">
+                        <div className="member-avatar">
+                            <span className="avatar-text">JM</span>
+                            <div className="member-role-badge frontend">Frontend</div>
+                        </div>
+                        <div className="member-info">
+                            <h3>Juan Moreno</h3>
+                            <p>Front Developer</p>
+                        </div>
+                    </div>
+
+                    <div className="team-member">
+                        <div className="member-avatar">
+                            <span className="avatar-text">GG</span>
+                            <div className="member-role-badge backend">Backend</div>
+                        </div>
+                        <div className="member-info">
+                            <h3>Gabriela Guzman</h3>
+                            <p>Back Developer</p>
+                        </div>
+                    </div>
+
+                    <div className="team-member">
+                        <div className="member-avatar">
+                            <span className="avatar-text">LS</span>
+                            <div className="member-role-badge frontend">Frontend</div>
+                        </div>
+                        <div className="member-info">
+                            <h3>Laura Salazar</h3>
+                            <p>Front Developer</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
