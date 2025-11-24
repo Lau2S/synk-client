@@ -208,12 +208,12 @@ const Profile: React.FC = () => {
 
                     <div className="profile-info">
                         <div className="info-row">
-                            <span className="label">Email:</span>
+                            <span className="label">Email: </span>
                             <span className="value">{profile?.email ?? storeUser?.email ?? '—'}</span>
                         </div>
 
                         <div className="info-row">
-                            <span className="label">Edad:</span>
+                            <span className="label">Edad: </span>
                             <span className="value">{profile?.age ?? (storeUser as any)?.age ?? '—'}</span>
                         </div>
                     </div>

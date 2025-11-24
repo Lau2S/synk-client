@@ -25,48 +25,69 @@ const Dashboard: React.FC = () => {
 
     return (
         <div className="container-dashboard">
-            
-
             <main className="hero">
-                <h1>Empieza a comunicarte de forma mas facil y rapida ahora mismo</h1>
+                <div className="hero-content">
+                    <h1>Empieza a comunicarte de forma <span className="highlight">más fácil y rápida</span> ahora mismo</h1>
+                    <p className="hero-subtitle">
+                        Conecta con tu equipo desde cualquier lugar. Crea o únete a reuniones de manera instantánea.
+                    </p>
 
-                <div className="actions">
-                    <button className="primary-btn" onClick={() => navigate('/meeting')}>Crear reunión</button>
+                    <div className="actions">
+                        <button className="primary-btn" onClick={() => navigate('/meeting')}>
+                            <span className="btn-icon">🎥</span>
+                            <span>Crear Reunión</span>
+                        </button>
 
-                    <div className="join-row">
-                        <input className="join-input" placeholder="Ingrese el ID de la reunión" />
-                        <button className="join-btn">Unirse</button>
+                        <div className="divider">
+                            <span>o</span>
+                        </div>
+
+                        <div className="join-section">
+                            <div className="join-row">
+                                <input 
+                                    className="join-input" 
+                                    placeholder="Ingresa el ID de la reunión" 
+                                />
+                                <button className="join-btn">
+                                    <span>⚡ Unirse</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <section className="features">
-                    <article className="feature">
-                        <div className="icon-circle">
-                            <img src={CameraIcon} alt="camera" />
-                        </div>
-                        <h3>Obten un ID para compartir</h3>
-                        <p>Toca el botón Crear Reunión para generar un ID que puedes compartir con quien desees</p>
-                    </article>
+                    <div className="features-header">
+                        <h2>¿Cómo funciona?</h2>
+                    </div>
+                    
+                    <div className="features-grid">
+                        <article className="feature">
+                            <div className="icon-circle">
+                                <img src={CameraIcon} alt="camera" />
+                            </div>
+                            <h3>Obtén un ID para compartir</h3>
+                            <p>Toca el botón Crear Reunión para generar un ID que puedes compartir con quien desees</p>
+                        </article>
 
-                    <article className="feature">
-                        <div className="icon-circle">
-                            <img src={CodeIcon} alt="codigo" />
-                        </div>
-                        <h3>Ingresa a una reunión con un ID</h3>
-                        <p>Ingresa un ID que te hayan compartido para entrar a una reunión</p>
-                    </article>
+                        <article className="feature">
+                            <div className="icon-circle">
+                                <img src={CodeIcon} alt="codigo" />
+                            </div>
+                            <h3>Ingresa a una reunión con un ID</h3>
+                            <p>Ingresa un ID que te hayan compartido para entrar a una reunión</p>
+                        </article>
 
-                    <article className="feature">
-                        <div className="icon-circle">
-                            <img src={LockIcon} alt="seguridad" />
-                        </div>
-                        <h3>Manten segura tu reunión</h3>
-                        <p>Evita compartir a personas ajenas el ID de tu reunión</p>
-                    </article>
+                        <article className="feature">
+                            <div className="icon-circle">
+                                <img src={LockIcon} alt="seguridad" />
+                            </div>
+                            <h3>Mantén segura tu reunión</h3>
+                            <p>Evita compartir a personas ajenas el ID de tu reunión</p>
+                        </article>
+                    </div>
                 </section>
             </main>
-
-            
         </div>
     )
 }

@@ -12,28 +12,38 @@ $color-buttons: #3ec7cd;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+@mixin hover-lift {
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  }
+}
+
 .container-about-us{
     display: flex;            
     flex-direction: column;
-    justify-content:center;
+    justify-content: center;
     align-items: center;
     min-height: 100vh;
-    padding: 6.4rem 4.5em 3rem 4.5em;
-      // Fondo con gradiente
+    padding: 8rem 4.5rem 3rem 4.5rem;
+    // Fondo con gradiente mejorado
     background: 
     radial-gradient(600px at 10% 20%, rgba(62, 199, 205, 0.15), transparent),
     radial-gradient(800px at 90% 80%, rgba(62, 199, 205, 0.12), transparent),
     #1b2226;
-    gap: 2rem;
+    gap: 3rem;
 
     .main-container{
         text-align: center;
+        max-width: 900px;
 
         h1{
           color: $white;
           font-size: 3rem;
           line-height: 1.2;
-          margin-bottom: 1rem;
+          margin-bottom: 2rem;
           font-weight: 700;
         }
     
@@ -41,90 +51,132 @@ $color-buttons: #3ec7cd;
           color: $text-primary;
           font-size: 1.1rem;
           line-height: 1.6;
-          margin-bottom: 0.6rem;
+          margin-bottom: 1.5rem;
           margin-top: 0;
-          padding: 1rem 7rem;
+          padding: 0 2rem;
         }
-
 
         button{
             padding: 1rem 3.5rem;    
             font-size: 1.1rem;
             font-weight: 700;
-            margin-top: 1rem;
+            margin-top: 2rem;
             color: $white;
             background-color: $color-buttons;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
 
             &:hover{
                 transform: translateY(-2px);
-                filter: brightness(0.95);
+                filter: brightness(1.1);
+                box-shadow: 0 8px 25px rgba(62, 199, 205, 0.3);
             }
         }
     }
 
-    h2{
-        color: $white;
-        font-size: 2.5rem;
-        line-height: 1.2;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-        font-weight: 700;
-    }
+    .team-section{
+        width: 100%;
+        max-width: 1200px;
+        
+        h2{
+            color: $white;
+            font-size: 2.5rem;
+            line-height: 1.2;
+            margin-bottom: 3rem;
+            font-weight: 700;
+            text-align: center;
+        }
 
-    .content-group{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 2rem;
-        width: 100%;         // MUY importante
-        max-width: 1200px;     // para que no se estiren demasiado
-        margin: 0 auto;    
+        .team-grid{
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            justify-items: center;
 
-        .box {
-                text-align: center;
-                border: 2px solid $text-primary;
-                border-radius: 10px;
-                padding: 1rem;
-                background-color: $color-secondary;
-                width: 240px;      // todas iguales
-                min-height: 150px; // misma altura mínima
+            .team-member {
                 @include glassmorphism;
-        
-                h3 {
-                    color: $white;
-                    font-size: 1.5rem;
-                    line-height: 1.2;
-                    margin-bottom: 1rem;
-                    font-weight: 700;
+                @include hover-lift;
+                text-align: center;
+                border-radius: 15px;
+                padding: 2rem 1.5rem;
+                width: 100%;
+                max-width: 280px;
+                position: relative;
+
+                .member-avatar {
+                    position: relative;
+                    margin: 0 auto 1.5rem auto;
+                    width: 80px;
+                    height: 80px;
+
+                    .avatar-text {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 80px;
+                        height: 80px;
+                        background: linear-gradient(135deg, $color-buttons, #4ecdc4);
+                        border-radius: 50%;
+                        font-size: 1.5rem;
+                        font-weight: 700;
+                        color: $white;
+                        box-shadow: 0 8px 20px rgba(62, 199, 205, 0.3);
+                    }
+
+                    .member-role-badge {
+                        position: absolute;
+                        bottom: -5px;
+                        right: -5px;
+                        padding: 0.3rem 0.8rem;
+                        border-radius: 12px;
+                        font-size: 0.75rem;
+                        font-weight: 600;
+                        color: $white;
+
+                        &.frontend {
+                            background: linear-gradient(135deg, #ff6b6b, #ffa726);
+                        }
+
+                        &.backend {
+                            background: linear-gradient(135deg, #4ecdc4, #45b7b8);
+                        }
+                    }
                 }
-        
-                p {
-                    color: $text-primary;
-                    font-size: 1.1rem;
-                    line-height: 1.6;
+
+                .member-info {
+                    h3 {
+                        color: $white;
+                        font-size: 1.3rem;
+                        line-height: 1.2;
+                        margin-bottom: 0.5rem;
+                        font-weight: 600;
+                    }
+            
+                    p {
+                        color: $text-primary;
+                        font-size: 1rem;
+                        line-height: 1.4;
+                        margin: 0;
+                    }
                 }
             }
-
+        }
     }
 
-    
-   // Responsive About Us - MÓVILES
+    // Responsive About Us - MÓVILES
     @media (max-width: 768px) {
         padding: 6rem 2rem 3rem 2rem;
-        gap: 2rem;
+        gap: 2.5rem;
 
         .main-container {
-            margin-top: 3rem;
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
 
             p {
-                padding: 0.8rem 1rem;
+                padding: 0 1rem;
                 font-size: 1rem;
                 line-height: 1.6;
             }
@@ -135,96 +187,93 @@ $color-buttons: #3ec7cd;
             }
         }
 
-        h2 {
-            font-size: 1.9rem;
-        }
+        .team-section {
+            h2 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
 
-        .content-group {
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            max-width: 500px;
+            .team-grid {
+                grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+                gap: 1.5rem;
 
-            .box {
-                width: calc(50% - 0.75rem);
-                min-height: 160px;
-                padding: 1.2rem 1rem;
+                .team-member {
+                    max-width: none;
+                    padding: 1.8rem 1.2rem;
 
-                h3 {
-                    font-size: 1.2rem;
-                }
-
-                p {
-                    font-size: 1rem;
-                    padding: 0;
+                    .member-info h3 {
+                        font-size: 1.2rem;
+                    }
                 }
             }
         }
     }
 
     @media (max-width: 580px) {
-        padding: 5.5rem 1.5rem 2.5rem 1.5rem;
-        gap: 1.5rem;
+        padding: 6rem 1.5rem 2.5rem 1.5rem;
+        gap: 2rem;
 
         .main-container {
             h1 {
-                font-size: 1.7rem;
-                margin-bottom: 0.8rem;
+                font-size: 1.8rem;
+                margin-bottom: 1.5rem;
             }
 
             p {
-                padding: 0.5rem 0.5rem;
+                padding: 0 0.5rem;
                 font-size: 0.95rem;
                 line-height: 1.55;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
             }
 
             button {
                 padding: 0.85rem 2.5rem;
                 font-size: 0.95rem;
-                margin-top: 0.8rem;
+                margin-top: 1.5rem;
             }
         }
 
-        h2 {
-            font-size: 1.65rem;
-            margin-top: 1rem;
-        }
+        .team-section {
+            h2 {
+                font-size: 1.7rem;
+                margin-bottom: 1.5rem;
+            }
 
-        .content-group {
-            flex-direction: column;
-            gap: 1.3rem;
-            max-width: 350px;
+            .team-grid {
+                grid-template-columns: 1fr;
+                gap: 1.3rem;
+                max-width: 350px;
+                margin: 0 auto;
 
-            .box {
-                width: 100%;
-                min-height: auto;
-                padding: 1.5rem 1.3rem;
+                .team-member {
+                    padding: 1.5rem 1rem;
 
-                h3 {
-                    font-size: 1.25rem;
-                    margin-bottom: 0.7rem;
-                }
+                    .member-info {
+                        h3 {
+                            font-size: 1.15rem;
+                        }
 
-                p {
-                    font-size: 1rem;
-                    line-height: 1.5;
+                        p {
+                            font-size: 0.95rem;
+                        }
+                    }
                 }
             }
         }
     }
 
     @media (max-width: 400px) {
-        padding: 5rem 1rem 2rem 1rem;
-        gap: 1.2rem;
+        padding: 7rem 1rem 2rem 1rem;
+        gap: 1.5rem;
 
         .main-container {
             h1 {
-                font-size: 1.5rem;
+                font-size: 1.6rem;
                 line-height: 1.3;
             }
 
             p {
-                padding: 0.4rem 0;
+                padding: 0;
                 font-size: 0.9rem;
                 line-height: 1.5;
             }
@@ -235,23 +284,35 @@ $color-buttons: #3ec7cd;
             }
         }
 
-        h2 {
-            font-size: 1.5rem;
-        }
+        .team-section {
+            h2 {
+                font-size: 1.5rem;
+            }
 
-        .content-group {
-            gap: 1.2rem;
-            max-width: 100%;
+            .team-grid {
+                .team-member {
+                    padding: 1.3rem 0.8rem;
 
-            .box {
-                padding: 1.3rem 1.2rem;
+                    .member-avatar {
+                        width: 70px;
+                        height: 70px;
 
-                h3 {
-                    font-size: 1.15rem;
-                }
+                        .avatar-text {
+                            width: 70px;
+                            height: 70px;
+                            font-size: 1.3rem;
+                        }
+                    }
 
-                p {
-                    font-size: 0.95rem;
+                    .member-info {
+                        h3 {
+                            font-size: 1.1rem;
+                        }
+
+                        p {
+                            font-size: 0.9rem;
+                        }
+                    }
                 }
             }
         }
