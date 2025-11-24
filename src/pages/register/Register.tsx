@@ -80,7 +80,6 @@ const Register: React.FC = () => {
         age: age === '' ? undefined : Number(age)
       };
 
--      await createUser(payload);
 +      await registerUser(payload);
 
       navigate('/login');
