@@ -34,8 +34,7 @@ const Dashboard: React.FC = () => {
 
                     <div className="actions">
                         <button className="primary-btn" onClick={() => navigate('/meeting')}>
-                            <span className="btn-icon">🎥</span>
-                            <span>Crear Reunión</span>
+                            Crear Reunión
                         </button>
 
                         <div className="divider">
@@ -49,7 +48,7 @@ const Dashboard: React.FC = () => {
                                     placeholder="Ingresa el ID de la reunión" 
                                 />
                                 <button className="join-btn">
-                                    <span>⚡ Unirse</span>
+                                    Unirse
                                 </button>
                             </div>
                         </div>

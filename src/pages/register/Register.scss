@@ -57,6 +57,37 @@ $color-buttons: #3ec7cd;
       // Grupo de formulario
       .form-group {
         position: relative;
+
+        &.password-group {
+          .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 14px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+
+            .toggle-icon {
+              width: 20px;
+              height: 20px;
+              opacity: 0.8;
+              transition: opacity 0.3s ease;
+
+              &:hover {
+                opacity: 0.8;
+              }
+            }
+          }
+
+          .form-input {
+            padding-right: 45px;
+          }
+        }
       }
 
       // Input del formulario
@@ -79,6 +110,131 @@ $color-buttons: #3ec7cd;
           border-color: $color-primary;
           background: rgba(255, 255, 255, 0.95);
         }
+      }
+
+      // Password validation dropdown
+      .password-requirements {
+        @include glassmorphism;
+        background: rgba(42, 48, 52, 0.95);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        text-align: left;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        animation: slideDown 0.3s ease-out;
+
+        p {
+          color: $white;
+          font-size: 0.9rem;
+          font-weight: 600;
+          margin-bottom: 0.7rem;
+          margin-top: 0;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 0;
+            font-size: 0.85rem;
+            color: $text-primary;
+            transition: all 0.3s ease;
+
+            .icon {
+              font-weight: 700;
+              font-size: 0.9rem;
+              width: 16px;
+              height: 16px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              border-radius: 50%;
+              background: rgba(255, 255, 255, 0.1);
+            }
+
+            &.valid {
+              color: #4ecdc4;
+
+              .icon {
+                color: #4ecdc4;
+                background: rgba(78, 205, 196, 0.2);
+              }
+            }
+
+            &:not(.valid) {
+              .icon {
+                color: #e74c3c;
+                background: rgba(231, 76, 60, 0.2);
+              }
+            }
+          }
+        }
+      }
+
+      // Password match validation
+      .password-match-validation {
+        margin-top: 0.5rem;
+        animation: slideDown 0.3s ease-out;
+
+        .match-indicator {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 0.75rem;
+          border-radius: 8px;
+          font-size: 0.85rem;
+          font-weight: 500;
+          transition: all 0.3s ease;
+
+          .icon {
+            font-weight: 700;
+            font-size: 0.9rem;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+          }
+
+          &.valid {
+            background: rgba(78, 205, 196, 0.15);
+            color: #4ecdc4;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+
+            .icon {
+              color: #4ecdc4;
+              background: rgba(78, 205, 196, 0.2);
+            }
+          }
+
+          &.invalid {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+
+            .icon {
+              color: #e74c3c;
+              background: rgba(231, 76, 60, 0.2);
+            }
+          }
+        }
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
       }
     }
 
