@@ -195,26 +195,22 @@ const Meeting: React.FC = () => {
             className={`control-button ${!isMicOn ? 'disabled' : ''}`}
             onClick={() => setIsMicOn(!isMicOn)}
           >
-            <span className="control-icon">{isMicOn ? '🎤' : '🔇'}</span>
-            <span className="control-label">{isMicOn ? 'Microfono' : 'Microfono'}</span>
+            <img src={isMicOn ? "/mic.svg" : "/mic-off.svg"} alt="Micrófono" className="control-icon" />
           </button>
 
           <button
             className={`control-button ${!isCameraOn ? 'disabled' : ''}`}
             onClick={() => setIsCameraOn(!isCameraOn)}
           >
-            <span className="control-icon">{isCameraOn ? '📹' : '📷'}</span>
-            <span className="control-label">{isCameraOn ? 'Cámara' : 'Cámara'}</span>
+            <img src={isCameraOn ? "/camera.svg" : "/videocam-off-outline.svg"} alt="Cámara" className="control-icon" />
           </button>
 
           <button className="control-button hang-up" onClick={() => navigate('/dashboard')}>
-            <span className="control-icon">📞</span>
-            <span className="control-label">Colgar</span>
+            <img src="/phone.svg" alt="Colgar" className="control-icon" />
           </button>
 
           <button className="control-button" onClick={() => setIsChatOpen(!isChatOpen)}>
-            <span className="control-icon">💬</span>
-            <span className="control-label">Chat</span>
+            <img src="/chat.svg" alt="Chat" className="control-icon" />
           </button>
         </div>
       </footer>
