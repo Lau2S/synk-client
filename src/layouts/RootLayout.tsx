@@ -27,15 +27,17 @@ const RootLayout: React.FC = () => {
   const isProfile = location.pathname.startsWith("/profile");
   const useAuthNavbar = isDashboard || isProfile;
 
+  const hideNavbar = location.pathname.startsWith("/meeting");
+
   return (
     <div className="root-layout">
-      {useAuthNavbar ? <NavbarDashboard /> : <Navbar />}
+      {!hideNavbar && (useAuthNavbar ? <NavbarDashboard /> : <Navbar />)}
 
       <main className="main-content">
         <Outlet />
       </main>
 
-      <Footer />
+      {!hideNavbar && <Footer />}
     </div>
   );
 };
