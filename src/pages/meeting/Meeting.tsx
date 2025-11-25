@@ -163,12 +163,14 @@ const Meeting: React.FC = () => {
                 <div className="no-messages">No hay mensajes aún</div>
               ) : (
                 messages.map((msg, idx) => (
-                  <div key={idx} className="message">
-                    <div className="message-header">
-                      <span className="message-sender">{msg.sender}</span>
-                      <span className="message-time">{msg.time}</span>
+                  <div key={idx} className={`message ${msg.sender === 'Tú' ? 'own-message' : 'other-message'}`}>
+                    <div className="message-bubble">
+                      <div className="message-header">
+                        <span className="message-sender">{msg.sender}</span>
+                        <span className="message-time">{msg.time}</span>
+                      </div>
+                      <div className="message-text">{msg.text}</div>
                     </div>
-                    <div className="message-text">{msg.text}</div>
                   </div>
                 ))
               )}

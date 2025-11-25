@@ -195,32 +195,80 @@ $color-buttons: #3ec7cd;
     }
 
     .message {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 0.8rem;
-      border-radius: 8px;
-      border-left: 3px solid $color-buttons;
-
-      .message-header {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 0.4rem;
-
-        .message-sender {
-          font-weight: 600;
-          font-size: 0.9rem;
-          color: $color-buttons;
-        }
-
-        .message-time {
-          font-size: 0.75rem;
-          color: $text-primary;
+      max-width: 85%;
+      margin-bottom: 0.8rem;
+      
+      &.own-message {
+        align-self: flex-end;
+        
+        .message-bubble {
+          background: #2a9fa5;
+          border-radius: 18px 18px 4px 18px;
+          padding: 0.8rem 1rem;
+          box-shadow: 0 2px 8px rgba(42, 159, 165, 0.3);
+          
+          .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+            
+            .message-sender {
+              font-weight: 600;
+              font-size: 0.8rem;
+              color: rgba(255, 255, 255, 0.9);
+            }
+            
+            .message-time {
+              font-size: 0.7rem;
+              color: rgba(255, 255, 255, 0.7);
+              margin-left: 0.5rem;
+            }
+          }
+          
+          .message-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: $white;
+          }
         }
       }
-
-      .message-text {
-        font-size: 0.9rem;
-        line-height: 1.4;
-        color: $white;
+      
+      &.other-message {
+        align-self: flex-start;
+        
+        .message-bubble {
+          background: rgba(255, 255, 255, 0.08);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: 18px 18px 18px 4px;
+          padding: 0.8rem 1rem;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          
+          .message-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.3rem;
+            
+            .message-sender {
+              font-weight: 600;
+              font-size: 0.8rem;
+              color: $color-buttons;
+            }
+            
+            .message-time {
+              font-size: 0.7rem;
+              color: $text-primary;
+              margin-left: 0.5rem;
+            }
+          }
+          
+          .message-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: $white;
+          }
+        }
       }
     }
   }
@@ -284,37 +332,38 @@ $color-buttons: #3ec7cd;
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: $color-buttons;
+    background: #2a9fa5;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(62, 199, 205, 0.3);
+    box-shadow: 0 2px 8px rgba(42, 159, 165, 0.2);
 
     &:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 20px rgba(62, 199, 205, 0.4);
-      filter: brightness(1.1);
+      transform: translateY(-2px);
+      background: #238a90;
+      box-shadow: 0 4px 12px rgba(42, 159, 165, 0.3);
     }
 
     &.disabled {
-      background: rgba(231, 76, 60, 0.8);
-      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+      background: #c0392b;
+      box-shadow: 0 2px 8px rgba(192, 57, 43, 0.2);
 
       &:hover {
-        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        background: #a93226;
+        box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
       }
     }
 
     &.hang-up {
-      background: #e74c3c;
-      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+      background: #c0392b;
+      box-shadow: 0 2px 8px rgba(192, 57, 43, 0.2);
 
       &:hover {
-        background: #c0392b;
-        box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        background: #a93226;
+        box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
       }
 
       .control-icon {
