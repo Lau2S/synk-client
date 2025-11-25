@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Meeting.scss';
 import { useNavigate } from 'react-router-dom';
+import socket from '../../lib/socket';
+import useAuthStore from '../../stores/useAuthStore';
 
 /**
  * Participant representation used in the meeting UI.
@@ -37,11 +39,14 @@ interface Participant {
 
 const Meeting: React.FC = () => {
   const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: string; text: string; time: string }>>([]);
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
+
+  const roomId = 'meeting-room-1';
 
   const participants: Participant[] = [
     { id: 1, name: 'Valentina Sanchez', initial: 'V' },
@@ -50,6 +55,51 @@ const Meeting: React.FC = () => {
     { id: 4, name: 'Gabriela Guzman', initial: 'G' },
     { id: 5, name: 'Laura Salazar', initial: 'L' },
   ];
+
+  useEffect(() => {
+    // conectar y unirse a la sala al montar
+    socket.connect();
+    socket.emit('joinRoom', roomId, { displayName: user?.displayName, userId: (user as any)?.uid });
+
+    const formatSenderNameFromEmail = (email?: string) => {
+      if (!email) return 'Anon';
+      const local = email.split('@')[0];
+      // separar por . _ - y capitalizar partes
+      return local
+        .split(/[\._\-]/)
+        .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+        .join(' ');
+    };
+
+    const onReceive = (msg: { sender: string; senderId?: string; message: string; time?: string }) => {
+      const now = new Date();
+      const time = msg.time ?? `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+      // identificar propio mensaje: preferir senderId, si no está, comparar con el user local
+      const isOwn =
+        (msg.senderId && msg.senderId === socket.id) ||
+        (!msg.senderId && (msg.sender === user?.displayName || msg.sender === user?.email));
+
+      let displaySender: string;
+      if (isOwn) {
+        displaySender = 'Tú';
+      } else if (msg.sender && msg.sender.includes('@')) {
+        displaySender = formatSenderNameFromEmail(msg.sender);
+      } else {
+        displaySender = msg.sender || 'Anon';
+      }
+
+      setMessages((s) => [...s, { sender: displaySender, text: msg.message, time }]);
+    };
+
+    socket.on('receiveMessage', onReceive);
+
+    return () => {
+      socket.emit('leaveRoom', roomId);
+      socket.off('receiveMessage', onReceive);
+      socket.disconnect();
+    };
+  }, [roomId, user]);
 
   /**
    * Handle sending a chat message.
@@ -63,12 +113,19 @@ const Meeting: React.FC = () => {
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    if (chatMessage.trim()) {
-      const now = new Date();
-      const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-      setMessages([...messages, { sender: 'Tú', text: chatMessage, time }]);
-      setChatMessage('');
-    }
+    const text = chatMessage.trim();
+    if (!text) return;
+
+    // usar nombre real del usuario si está disponible; incluir senderId para que el servidor
+    // lo reenvíe y podamos identificar el autor y mostrar "Tú" solo en su cliente.
+    const senderName = user?.displayName ?? user?.email ?? 'Anon';
+    const senderId = socket.id; // se obtiene después de socket.connect()
+
+    // emitir al servidor (sin agregar localmente para evitar duplicados)
+    socket.emit('sendMessage', { roomId, sender: senderName, senderId, message: text });
+
+    // No hacer append local: esperar al evento 'receiveMessage' del servidor
+    setChatMessage('');
   };
 
   return (
