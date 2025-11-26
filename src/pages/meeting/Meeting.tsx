@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Meeting.scss';
 import { useNavigate, useParams } from 'react-router-dom';
 import socket from '../../lib/socket';
@@ -49,6 +49,11 @@ const Meeting: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: string; text: string; time: string }>>([]);
+  const pendingSentRef = useRef<Array<{ text: string; ts: number; clientId?: string }>>([]);
+
+  // derivar nombre/id del user (tu login normal tiene firstName/id/email)
+  const localSenderName = (user as any)?.firstName || user?.displayName || (user as any)?.email || 'Invitado';
+  const localUserId = (user as any)?.id || (user as any)?.uid || (user as any)?.userId || undefined;
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
 
@@ -87,7 +92,7 @@ const Meeting: React.FC = () => {
     
     // conectar y unirse a la sala al montar
     socket.connect();
-    socket.emit('joinRoom', meetingId, { displayName: user?.displayName, userId: (user as any)?.uid });
+    socket.emit('joinRoom', meetingId, { displayName: localSenderName, userId: localUserId, socketId: socket.id });
 
     const formatSenderNameFromEmail = (email?: string) => {
       if (!email) return 'Anon';
@@ -99,22 +104,32 @@ const Meeting: React.FC = () => {
         .join(' ');
     };
 
-    const onReceive = (msg: { sender: string; senderId?: string; message: string; time?: string }) => {
+    const onReceive = (msg: any) => {
       const now = new Date();
       const time = msg.time ?? `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-      // identificar propio mensaje: preferir senderId, si no está, comparar con el user local
+      const nowTs = Date.now();
+      const pendingIdx = pendingSentRef.current.findIndex(p => p.text === msg.message && nowTs - p.ts < 5000);
+      if (pendingIdx !== -1) {
+        pendingSentRef.current.splice(pendingIdx, 1);
+        return;
+      }
+
+      // identificar propio mensaje: preferir senderId/userId, si no está comparar con localSenderName/email
+      const remoteSenderId = msg.senderId ?? msg.userId ?? msg.user?.id ?? msg.socketId;
+      const remoteSenderRaw = msg.sender ?? msg.user ?? msg.email ?? undefined;
       const isOwn =
-        (msg.senderId && msg.senderId === socket.id) ||
-        (!msg.senderId && (msg.sender === user?.displayName || msg.sender === user?.email));
+        (remoteSenderId && localUserId && remoteSenderId === localUserId) ||
+        (remoteSenderId && remoteSenderId === socket.id) ||
+        (!remoteSenderId && (remoteSenderRaw === localSenderName || remoteSenderRaw === (user as any)?.email));
 
       let displaySender: string;
       if (isOwn) {
         displaySender = 'Tú';
-      } else if (msg.sender && msg.sender.includes('@')) {
-        displaySender = formatSenderNameFromEmail(msg.sender);
+      } else if (typeof remoteSenderRaw === 'string' && remoteSenderRaw.includes('@')) {
+        displaySender = formatSenderNameFromEmail(remoteSenderRaw);
       } else {
-        displaySender = msg.sender || 'Anon';
+        displaySender = (typeof remoteSenderRaw === 'string' ? remoteSenderRaw : msg.sender) || 'Invitado';
       }
 
       setMessages((s) => [...s, { sender: displaySender, text: msg.message, time }]);
@@ -159,15 +174,22 @@ const Meeting: React.FC = () => {
     const text = chatMessage.trim();
     if (!text) return;
 
-    // usar nombre real del usuario si está disponible; incluir senderId para que el servidor
-    // lo reenvíe y podamos identificar el autor y mostrar "Tú" solo en su cliente.
-    const senderName = user?.displayName ?? user?.email ?? 'Anon';
-    const senderId = socket.id; // se obtiene después de socket.connect()
+    const now = new Date();
+    const time = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+    setMessages((s) => [...s, { sender: 'Tú', text, time }]);
 
-    // emitir al servidor (sin agregar localmente para evitar duplicados)
-    socket.emit('sendMessage', { roomId: meetingId, sender: senderName, senderId, message: text });
+    // registrar pendiente para dedupe si el servidor reenvía el mismo texto
+    pendingSentRef.current.push({ text, ts: Date.now(), clientId: String(Date.now() + Math.floor(Math.random() * 1000)) });
 
-    // No hacer append local: esperar al evento 'receiveMessage' del servidor
+    // emitir al servidor con campos que el backend pueda usar (nombre  id)
+    const payload = {
+      roomId: meetingId,
+      sender: localSenderName,
+      senderId: localUserId ?? socket.id,
+      message: text,
+      clientMessageId: pendingSentRef.current.at(-1)?.clientId,
+    };
+    socket.emit('sendMessage', payload);
     setChatMessage('');
   };
 
