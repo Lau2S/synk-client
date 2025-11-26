@@ -1,8 +1,13 @@
 import { create } from 'zustand'
-import { signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail } from 'firebase/auth'
 import { auth, googleProvider, facebookProvider } from '../lib/firebase.config';
-
-
+import { 
+  signInWithPopup, 
+  signOut, 
+  onAuthStateChanged, 
+  sendPasswordResetEmail,
+  GoogleAuthProvider,
+  FacebookAuthProvider
+} from 'firebase/auth'
 
 interface User {
     displayName: string | null,
