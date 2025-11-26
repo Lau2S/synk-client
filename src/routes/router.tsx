@@ -9,6 +9,7 @@ import Dashboard from "../pages/dashboard/Dashboard";
 import SiteMap from "../pages/site-map/SiteMap";
 import Meeting from "../pages/meeting/Meeting";
 import ResetPassword from "../pages/reset-password/ResetPassword";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 /**
  * Application routes configuration.
@@ -51,19 +52,31 @@ export const routes = [
             },
             {
                 path: "dashboard",
-                element: <Dashboard />,
+                element: (
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "profile",
-                element: <Profile />,
+                element: (
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "site-map",
                 element: <SiteMap />,
             },
             {
-                path: "meeting",
-                element: <Meeting/>
+                path: "meeting/:meetingId?",
+                element: (
+                    <ProtectedRoute>
+                        <Meeting />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "reset-password",

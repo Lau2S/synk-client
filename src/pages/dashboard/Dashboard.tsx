@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import './Dashboard.scss';
 import CameraIcon from '/logos/camera.svg?url';
 import CodeIcon from '/logos/code.svg?url';
 import LockIcon from '/logos/lock.svg?url';
 import { useNavigate } from "react-router-dom";
+import { createMeeting, joinMeeting } from "../../api/meetings";
+import useAuthStore from "../../stores/useAuthStore";
 
 /**
  * Dashboard page component.
@@ -19,9 +21,64 @@ import { useNavigate } from "react-router-dom";
  */
 
 const Dashboard: React.FC = () => {
-
     const navigate = useNavigate();
-    
+    const user = useAuthStore((s) => s.user);
+    const [joinMeetingId, setJoinMeetingId] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    /**
+     * Handle creating a new meeting
+     */
+    const handleCreateMeeting = async () => {
+        setLoading(true);
+        setError(null);
+        
+        try {
+            // Obtener el userId del usuario autenticado
+            const hostId = (user as any)?.uid || user?.email || 'anonymous';
+            const title = `Reunión de ${user?.displayName || user?.email || 'Usuario'}`;
+            
+            // Crear la reunión en el backend
+            const meeting = await createMeeting(hostId, title);
+            
+            // Navegar a la página de reunión con el ID
+            navigate(`/meeting/${meeting.meetingId}`);
+        } catch (err: any) {
+            setError(err?.message || 'Error al crear la reunión');
+            console.error('Error creating meeting:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    /**
+     * Handle joining an existing meeting
+     */
+    const handleJoinMeeting = async () => {
+        if (!joinMeetingId.trim()) {
+            setError('Ingresa un ID de reunión válido');
+            return;
+        }
+
+        setLoading(true);
+        setError(null);
+
+        try {
+            const userId = (user as any)?.uid || user?.email || 'anonymous';
+            
+            // Unirse a la reunión
+            await joinMeeting(joinMeetingId, userId);
+            
+            // Navegar a la página de reunión
+            navigate(`/meeting/${joinMeetingId}`);
+        } catch (err: any) {
+            setError(err?.message || 'Error al unirse a la reunión');
+            console.error('Error joining meeting:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <div className="container-dashboard">
@@ -32,9 +89,26 @@ const Dashboard: React.FC = () => {
                         Conecta con tu equipo desde cualquier lugar. Crea o únete a reuniones de manera instantánea.
                     </p>
 
+                    {error && (
+                        <div style={{ 
+                            background: 'rgba(231, 76, 60, 0.1)', 
+                            border: '1px solid rgba(231, 76, 60, 0.3)',
+                            color: '#e74c3c',
+                            padding: '1rem',
+                            borderRadius: '10px',
+                            marginBottom: '1rem'
+                        }}>
+                            {error}
+                        </div>
+                    )}
+
                     <div className="actions">
-                        <button className="primary-btn" onClick={() => navigate('/meeting')}>
-                            Crear Reunión
+                        <button 
+                            className="primary-btn" 
+                            onClick={handleCreateMeeting}
+                            disabled={loading}
+                        >
+                            {loading ? 'Creando...' : 'Crear Reunión'}
                         </button>
 
                         <div className="divider">
@@ -45,10 +119,21 @@ const Dashboard: React.FC = () => {
                             <div className="join-row">
                                 <input 
                                     className="join-input" 
-                                    placeholder="Ingresa el ID de la reunión" 
+                                    placeholder="Ingresa el ID de la reunión"
+                                    value={joinMeetingId}
+                                    onChange={(e) => setJoinMeetingId(e.target.value)}
+                                    onKeyPress={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleJoinMeeting();
+                                        }
+                                    }}
                                 />
-                                <button className="join-btn">
-                                    Unirse
+                                <button 
+                                    className="join-btn"
+                                    onClick={handleJoinMeeting}
+                                    disabled={loading}
+                                >
+                                    {loading ? 'Uniéndose...' : 'Unirse'}
                                 </button>
                             </div>
                         </div>
