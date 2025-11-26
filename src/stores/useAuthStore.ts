@@ -117,7 +117,7 @@ const useAuthStore = create<AuthStore>()((set) => ({
           const idToken = await result.user.getIdToken();
           
           // Enviar al backend para guardar en Firestore
-          const response = await fetch('http://localhost:3000/api/v1/users/social-login', {
+          const response = await fetch('https://synk-backend-bia5.onrender.com/api/v1/users/social', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ idToken })
