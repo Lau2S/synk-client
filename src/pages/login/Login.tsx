@@ -113,15 +113,33 @@ const Login: React.FC = () => {
    * @returns {void}
    */
 
-  const handleLoginGoogle = (e?: React.MouseEvent<HTMLButtonElement>) => {
-    if (e) e.preventDefault();
-    loginWithGoogle().then(() => navigate('/dashboard'));
-  };
-
-  const handleLoginFacebook = (e?: React.MouseEvent<HTMLButtonElement>) => {
-    if (e) e.preventDefault();
-    loginWithFacebook().then(() => navigate('/dashboard'));
-  };
+    const handleLoginGoogle = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+      if (e) e.preventDefault();
+      setLoading(true);
+      setError(null);
+      try {
+        await loginWithGoogle();
+        navigate('/dashboard');
+      } catch (err: any) {
+        setError(err?.message || 'Error al iniciar sesión con Google');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    const handleLoginFacebook = async (e?: React.MouseEvent<HTMLButtonElement>) => {
+      if (e) e.preventDefault();
+      setLoading(true);
+      setError(null);
+      try {
+        await loginWithFacebook();
+        navigate('/dashboard');
+      } catch (err: any) {
+        setError(err?.message || 'Error al iniciar sesión con Facebook');
+      } finally {
+        setLoading(false);
+      }
+    };
 
   /**
    * Initialize auth observer on mount if provided by the auth store.
