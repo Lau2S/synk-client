@@ -22,7 +22,7 @@ import { loginUser } from '../../api/users'; //
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { loginWithGoogle, initAuthObserver, resetPassword, setUser } = useAuthStore();
+  const { loginWithGoogle, loginWithFacebook, initAuthObserver, resetPassword, setUser } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -118,6 +118,11 @@ const Login: React.FC = () => {
     loginWithGoogle().then(() => navigate('/dashboard'));
   };
 
+  const handleLoginFacebook = (e?: React.MouseEvent<HTMLButtonElement>) => {
+    if (e) e.preventDefault();
+    loginWithFacebook().then(() => navigate('/dashboard'));
+  };
+
   /**
    * Initialize auth observer on mount if provided by the auth store.
    * Returns the unsubscribe function in the effect cleanup.
@@ -201,7 +206,8 @@ const Login: React.FC = () => {
 
           <button
             className="facebook-login-button"
-            onClick={handleLoginGoogle}
+            onClick={handleLoginFacebook}
+            type="button"
           >
             <img src="logos/facebook-logo.png" alt="Iniciar sesión con Facebook" />
             <span>Usa Facebook</span>
