@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import './Register.scss';
-import { createUser } from '../../api/users';
 import { registerUser } from '../../api/users';
 
 /**
@@ -92,8 +91,7 @@ const Register: React.FC = () => {
         age: age === '' ? undefined : Number(age)
       };
 
--      await createUser(payload);
-+      await registerUser(payload);
+      await registerUser(payload);
 
       navigate('/login');
     } catch (err: any) {
