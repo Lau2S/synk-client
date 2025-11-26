@@ -26,7 +26,56 @@ const NavbarDashboard: React.FC = () => {
 
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [showLogoutModal, setShowLogoutModal] = useState(false);
-	const menuRef = useRef<HTMLDivElement | null>(null);
+    const menuRef = useRef<HTMLDivElement | null>(null);
+
+	const [cachedUser, setCachedUser] = useState<any | null>(() => {
+		if (user) return user;
+		try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
+	});
+	
+	useEffect(() => {
+		// priorizar el user del store; si no está, intentar leer localStorage
+		if (user) {
+			setCachedUser(user);
+			return;
+		}
+		try {
+			const raw = localStorage.getItem('user') || localStorage.getItem('profile') || null;
+			if (raw) {
+				const parsed = JSON.parse(raw);
+				if (parsed && Object.keys(parsed).length > 0) setCachedUser(parsed);
+			}
+		} catch (e) {
+			// noop
+		}
+	}, [user]);
+
+	const getUserInitial = () => {
+        const src =
+            (cachedUser as any)?.firstName ||
+            cachedUser?.displayName ||
+            (cachedUser as any)?.name ||
+            (cachedUser as any)?.email ||
+            (cachedUser as any)?.id ||
+            "";
+
+        if (!src || typeof src !== "string") return "U";
+        let candidate = src;
+        if (candidate.includes("@")) candidate = candidate.split("@")[0];
+        if (candidate.includes(" ")) candidate = candidate.split(" ")[0];
+        return (candidate.trim().charAt(0) || "U").toUpperCase();
+    };
+
+	const displayNameTitle = () => {
+        return (
+            (cachedUser as any)?.firstName ||
+            cachedUser?.displayName ||
+            (cachedUser as any)?.email ||
+            "Usuario"
+        );
+    };
+
+	
 
 	/**
      * Close the menu when clicking outside the menu container.
@@ -74,15 +123,16 @@ const NavbarDashboard: React.FC = () => {
 
 				<div className="nav-right" ref={menuRef}>
 				<button
-					className="user-btn"
-					aria-haspopup="true"
-					aria-expanded={menuOpen}
-					onClick={() => setMenuOpen((s) => !s)}
-				>
-					<span className="user-initial">
-						{user?.displayName ? user.displayName.charAt(0).toUpperCase() : "U"}
-					</span>
-				</button>
+                    className="user-btn"
+                    aria-haspopup="true"
+                    aria-expanded={menuOpen}
+                    onClick={() => setMenuOpen((s) => !s)}
+                    title={displayNameTitle()}
+                >
+                    <span className="user-initial">
+                        {getUserInitial()}
+                    </span>
+                </button>
 
 				{menuOpen && (
 					<div className="user-menu" role="menu">

@@ -77,6 +77,7 @@ const Login: React.FC = () => {
      // update user store if function exists
      if (res?.user && typeof setUser === 'function') {
        setUser(res.user);
+       try { localStorage.setItem('user', JSON.stringify(res.user)); } catch (e) { /* noop */ }
      }
      
      // Redirect to returnUrl or dashboard
