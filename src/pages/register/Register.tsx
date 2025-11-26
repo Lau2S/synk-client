@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import './Register.scss';
 import { registerUser } from '../../api/users';
@@ -21,7 +21,8 @@ import { registerUser } from '../../api/users';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { initAuthObserver } = useAuthStore();
+  const [searchParams] = useSearchParams();
+  const { initAuthObserver, user } = useAuthStore();
 
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -46,6 +47,17 @@ const Register: React.FC = () => {
    * Initialize authentication observer on mount if provided by the auth store.
    * The observer cleanup is returned to the effect cleanup.
    */
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    const checkAuth = () => {
+      if (user || localStorage.getItem('token')) {
+        const returnUrl = searchParams.get('returnUrl');
+        navigate(returnUrl || '/dashboard', { replace: true });
+      }
+    };
+    checkAuth();
+  }, [user, navigate, searchParams]);
 
   useEffect(() => {
     if (!initAuthObserver) return;

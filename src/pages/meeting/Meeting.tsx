@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './Meeting.scss';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import socket from '../../lib/socket';
 import useAuthStore from '../../stores/useAuthStore';
+import { getMeeting, endMeeting as endMeetingAPI } from '../../api/meetings';
 
 /**
  * Participant representation used in the meeting UI.
@@ -39,14 +40,38 @@ interface Participant {
 
 const Meeting: React.FC = () => {
   const navigate = useNavigate();
+  const { meetingId } = useParams<{ meetingId: string }>();
   const user = useAuthStore((s) => s.user);
+  
+  const [meeting, setMeeting] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: string; text: string; time: string }>>([]);
   const [isMicOn, setIsMicOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
 
-  const roomId = 'meeting-room-1';
+  // Cargar datos de la reunión
+  useEffect(() => {
+    const loadMeeting = async () => {
+      if (!meetingId) {
+        navigate('/dashboard');
+        return;
+      }
+
+      try {
+        const data = await getMeeting(meetingId);
+        setMeeting(data);
+      } catch (err) {
+        console.error('Error loading meeting:', err);
+        navigate('/dashboard');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadMeeting();
+  }, [meetingId, navigate]);
 
   const participants: Participant[] = [
     { id: 1, name: 'Valentina Sanchez', initial: 'V' },
@@ -57,9 +82,11 @@ const Meeting: React.FC = () => {
   ];
 
   useEffect(() => {
+    if (!meetingId) return;
+    
     // conectar y unirse a la sala al montar
     socket.connect();
-    socket.emit('joinRoom', roomId, { displayName: user?.displayName, userId: (user as any)?.uid });
+    socket.emit('joinRoom', meetingId, { displayName: user?.displayName, userId: (user as any)?.uid });
 
     const formatSenderNameFromEmail = (email?: string) => {
       if (!email) return 'Anon';
@@ -95,11 +122,23 @@ const Meeting: React.FC = () => {
     socket.on('receiveMessage', onReceive);
 
     return () => {
-      socket.emit('leaveRoom', roomId);
+      socket.emit('leaveRoom', meetingId);
       socket.off('receiveMessage', onReceive);
       socket.disconnect();
     };
-  }, [roomId, user]);
+  }, [meetingId, user]);
+
+  const handleEndMeeting = async () => {
+    if (!meetingId) return;
+    
+    try {
+      await endMeetingAPI(meetingId);
+      navigate('/dashboard');
+    } catch (err) {
+      console.error('Error ending meeting:', err);
+      navigate('/dashboard');
+    }
+  };
 
   /**
    * Handle sending a chat message.
@@ -122,14 +161,47 @@ const Meeting: React.FC = () => {
     const senderId = socket.id; // se obtiene después de socket.connect()
 
     // emitir al servidor (sin agregar localmente para evitar duplicados)
-    socket.emit('sendMessage', { roomId, sender: senderName, senderId, message: text });
+    socket.emit('sendMessage', { roomId: meetingId, sender: senderName, senderId, message: text });
 
     // No hacer append local: esperar al evento 'receiveMessage' del servidor
     setChatMessage('');
   };
 
+  if (loading) {
+    return (
+      <div className="meeting-container" style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+        color: '#fff',
+        fontSize: '1.2rem'
+      }}>
+        Cargando reunión...
+      </div>
+    );
+  }
+
   return (
     <div className="meeting-container">
+      {/* Mostrar ID de reunión */}
+      <div style={{
+        position: 'fixed',
+        top: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        background: 'rgba(42, 48, 52, 0.95)',
+        padding: '1rem 2rem',
+        borderRadius: '12px',
+        zIndex: 1000,
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)'
+      }}>
+        <p style={{ margin: 0, color: '#a8c4c5', textAlign: 'center' }}>
+          ID de reunión: <strong style={{ color: '#3ec7cd' }}>{meetingId}</strong>
+        </p>
+      </div>
+
       <div className="meeting-content">
         <div className="participants-grid">
           {participants.map((participant) => (

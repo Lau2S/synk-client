@@ -1,5 +1,5 @@
 import type React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import { useEffect, useState } from 'react';
 import './Login.scss';
@@ -22,7 +22,8 @@ import { loginUser } from '../../api/users'; //
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { loginWithGoogle, initAuthObserver, resetPassword, setUser } = useAuthStore();
+  const [searchParams] = useSearchParams();
+  const { loginWithGoogle, initAuthObserver, resetPassword, setUser, user } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,6 +36,17 @@ const Login: React.FC = () => {
   const [sending, setSending] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
 
+  // Redirect if already authenticated
+  useEffect(() => {
+    const checkAuth = () => {
+      if (user || localStorage.getItem('token')) {
+        const returnUrl = searchParams.get('returnUrl');
+        navigate(returnUrl || '/dashboard', { replace: true });
+      }
+    };
+    checkAuth();
+  }, [user, navigate, searchParams]);
+
   /**
    * Handle form submit for email/password login.
    *
@@ -44,7 +56,6 @@ const Login: React.FC = () => {
    * @param {React.FormEvent} e - Form submit event.
    * @returns {Promise<void>}
    */
-
 
   const handleLogin = async (e: React.FormEvent) => {
    e.preventDefault();
@@ -67,7 +78,10 @@ const Login: React.FC = () => {
      if (res?.user && typeof setUser === 'function') {
        setUser(res.user);
      }
-     navigate('/dashboard');
+     
+     // Redirect to returnUrl or dashboard
+     const returnUrl = searchParams.get('returnUrl');
+     navigate(returnUrl || '/dashboard');
    } catch (err: any) {
      setError(err?.message || err?.response?.message || 'Credenciales incorrectas');
    } finally {
@@ -115,7 +129,8 @@ const Login: React.FC = () => {
 
   const handleLoginGoogle = (e?: React.MouseEvent<HTMLButtonElement>) => {
     if (e) e.preventDefault();
-    loginWithGoogle().then(() => navigate('/dashboard'));
+    const returnUrl = searchParams.get('returnUrl');
+    loginWithGoogle().then(() => navigate(returnUrl || '/dashboard'));
   };
 
   /**
