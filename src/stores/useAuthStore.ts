@@ -110,19 +110,62 @@ const useAuthStore = create<AuthStore>()((set) => ({
 
     loginWithGoogle: async () => {
         try {
-            await signInWithPopup(auth, googleProvider);
-        } catch (e: any) {
-            console.error(e);
+          const provider = new GoogleAuthProvider();
+          const result = await signInWithPopup(auth, provider);
+          
+          // 🔴 IMPORTANTE: obtener idToken y enviarlo al backend
+          const idToken = await result.user.getIdToken();
+          
+          // Enviar al backend para guardar en Firestore
+          const response = await fetch('http://localhost:3000/api/v1/users/social-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken })
+          });
+    
+          const data = await response.json();
+          
+          if (response.ok) {
+            // Guardar token y usuario en el store
+            localStorage.setItem('token', idToken);
+            set({ user: data.user });
+            return data.user;
+          } else {
+            throw new Error(data.message || 'Error en login social');
+          }
+        } catch (error: any) {
+          console.error('Google login error:', error);
+          throw error;
         }
-    },
+      },
 
-    loginWithFacebook: async () => {
+      loginWithFacebook: async () => {
         try {
-            await signInWithPopup(auth, facebookProvider);
-        } catch (e: any) {
-            console.error(e);
+          const provider = new FacebookAuthProvider();
+          const result = await signInWithPopup(auth, provider);
+          
+          const idToken = await result.user.getIdToken();
+          
+          const response = await fetch('http://localhost:3000/api/v1/users/social-login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ idToken })
+          });
+    
+          const data = await response.json();
+          
+          if (response.ok) {
+            localStorage.setItem('token', idToken);
+            set({ user: data.user });
+            return data.user;
+          } else {
+            throw new Error(data.message || 'Error en login social');
+          }
+        } catch (error: any) {
+          console.error('Facebook login error:', error);
+          throw error;
         }
-    },
+      },
 
     /**
      * Sign out the current Firebase user.
