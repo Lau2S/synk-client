@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { auth, googleProvider, facebookProvider } from '../lib/firebase.config';
+import { auth } from '../lib/firebase.config';
 import { 
   signInWithPopup, 
   signOut, 
