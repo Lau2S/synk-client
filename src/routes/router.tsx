@@ -8,6 +8,7 @@ import AboutUs from "../pages/about-us/AboutUs";
 import Dashboard from "../pages/dashboard/Dashboard";
 import SiteMap from "../pages/site-map/SiteMap";
 import Meeting from "../pages/meeting/Meeting";
+import ResetPassword from "../pages/reset-password/ResetPassword";
 
 /**
  * Application routes configuration.
@@ -63,9 +64,11 @@ export const routes = [
             {
                 path: "meeting",
                 element: <Meeting/>
+            },
+            {
+                path: "reset-password",
+                element: <ResetPassword />,
             }
-            
-            
         ]
     }
 ]

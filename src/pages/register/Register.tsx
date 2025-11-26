@@ -21,7 +21,7 @@ import { registerUser } from '../../api/users';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const { loginWithGoogle, initAuthObserver } = useAuthStore();
+  const { initAuthObserver } = useAuthStore();
 
   const [name, setName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -31,6 +31,16 @@ const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordValidation, setPasswordValidation] = useState({
+    minLength: false,
+    hasUpperCase: false,
+    hasLowerCase: false,
+    hasNumber: false,
+    hasSpecialChar: false,
+  });
+  const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
 
   /**
    * Initialize authentication observer on mount if provided by the auth store.
@@ -44,15 +54,49 @@ const Register: React.FC = () => {
   }, [initAuthObserver]);
 
   /**
-   * Trigger Google (or social) sign-up flow and navigate to profile on success.
+   * Validate password requirements in real-time.
    *
-   * @param {React.FormEvent} e - Event from the social button click.
-   * @returns {void}
+   * @param {string} pass - The password to validate.
    */
+  const validatePassword = (pass: string) => {
+    setPasswordValidation({
+      minLength: pass.length >= 8,
+      hasUpperCase: /[A-Z]/.test(pass),
+      hasLowerCase: /[a-z]/.test(pass),
+      hasNumber: /\d/.test(pass),
+      hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pass),
+    });
+  };
 
-  const handleLoginGoogle = (e: React.FormEvent) => {
-    e.preventDefault();
-    loginWithGoogle().then(() => navigate('/profile'));
+  /**
+   * Handle password input change with validation.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
+   */
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newPassword = e.target.value;
+    setPassword(newPassword);
+    validatePassword(newPassword);
+    // Re-validate confirm password if it exists
+    if (confirmPassword) {
+      setPasswordMatch(newPassword === confirmPassword);
+    }
+  };
+
+  /**
+   * Handle confirm password input change with validation.
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} e - Input change event.
+   */
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newConfirmPassword = e.target.value;
+    setConfirmPassword(newConfirmPassword);
+    // Only validate if both fields have content
+    if (password && newConfirmPassword) {
+      setPasswordMatch(password === newConfirmPassword);
+    } else {
+      setPasswordMatch(null);
+    }
   };
 
   /**
@@ -90,7 +134,7 @@ const Register: React.FC = () => {
         password,
         age: age === '' ? undefined : Number(age)
       };
-
+      
       await registerUser(payload);
 
       navigate('/login');
@@ -157,28 +201,89 @@ const Register: React.FC = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group password-group">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Ingresa tu Contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               required
               className="form-input"
             />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              <img 
+                src={showPassword ? "/eye-crossed.svg" : "/eye.svg"} 
+                alt={showPassword ? "Ocultar" : "Mostrar"} 
+                className="toggle-icon"
+              />
+            </button>
+            {password && (
+              <div className="password-requirements">
+                <p>La contraseña debe contener:</p>
+                <ul>
+                  <li className={passwordValidation.minLength ? "valid" : ""}>
+                    <span className="icon">{passwordValidation.minLength ? '✓' : '✗'}</span>
+                    Al menos 8 caracteres
+                  </li>
+                  <li className={passwordValidation.hasUpperCase ? "valid" : ""}>
+                    <span className="icon">{passwordValidation.hasUpperCase ? '✓' : '✗'}</span>
+                    Una letra mayúscula
+                  </li>
+                  <li className={passwordValidation.hasLowerCase ? "valid" : ""}>
+                    <span className="icon">{passwordValidation.hasLowerCase ? '✓' : '✗'}</span>
+                    Una letra minúscula
+                  </li>
+                  <li className={passwordValidation.hasNumber ? "valid" : ""}>
+                    <span className="icon">{passwordValidation.hasNumber ? '✓' : '✗'}</span>
+                    Un número
+                  </li>
+                  <li className={passwordValidation.hasSpecialChar ? "valid" : ""}>
+                    <span className="icon">{passwordValidation.hasSpecialChar ? '✓' : '✗'}</span>
+                    Un carácter especial (!@#$%^&*...)
+                  </li>
+                </ul>
+              </div>
+            )}
           </div>
 
-          <div className="form-group">
+          <div className="form-group password-group">
             <input
-              type="password"
+              type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
               placeholder="Confirma tu Contraseña"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={handleConfirmPasswordChange}
               required
               className="form-input"
             />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              <img 
+                src={showConfirmPassword ? "/eye-crossed.svg" : "/eye.svg"} 
+                alt={showConfirmPassword ? "Ocultar" : "Mostrar"} 
+                className="toggle-icon"
+              />
+            </button>
+            {confirmPassword && passwordMatch !== null && (
+              <div className="password-match-validation">
+                <div className={`match-indicator ${passwordMatch ? 'valid' : 'invalid'}`}>
+                  <span className="icon">{passwordMatch ? '✓' : '✗'}</span>
+                  <span className="text">
+                    {passwordMatch ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
 
           {error && <div className="form-error">{error}</div>}
@@ -187,28 +292,6 @@ const Register: React.FC = () => {
             {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
-
-        <div className="separator"><span>o</span></div>
-
-        <div className="register-options">
-          <button
-            className="google-register-button"
-            onClick={handleLoginGoogle}
-            type="button"
-          >
-            <img src="logos/google-logo.png" alt="Registrarse con Google" />
-            <span>Usa Google</span>
-          </button>
-
-          <button
-            className="facebook-register-button"
-            onClick={handleLoginGoogle}
-            type="button"
-          >
-            <img src="logos/facebook-logo.png" alt="Registrarse con Facebook" />
-            <span>Usa Facebook</span>
-          </button>
-        </div>
 
         <div className="register-prompt">
           <span>¿Ya tienes una cuenta? </span>

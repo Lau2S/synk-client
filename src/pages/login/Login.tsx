@@ -28,6 +28,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const [showReset, setShowReset] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
@@ -152,9 +153,9 @@ const Login: React.FC = () => {
             />
           </div>
 
-          <div className="form-group">
+          <div className="form-group password-group">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Ingresa tu Contraseña"
               value={password}
@@ -162,6 +163,18 @@ const Login: React.FC = () => {
               required
               className="form-input"
             />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              <img 
+                src={showPassword ? "/eye-crossed.svg" : "/eye.svg"} 
+                alt={showPassword ? "Ocultar" : "Mostrar"} 
+                className="toggle-icon"
+              />
+            </button>
           </div>
 
           {error && <div className="form-error">{error}</div>}
