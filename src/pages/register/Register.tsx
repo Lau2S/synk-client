@@ -134,8 +134,7 @@ const Register: React.FC = () => {
         password,
         age: age === '' ? undefined : Number(age)
       };
-      
-      await registerUser(payload);
+     await registerUser(payload);
 
       navigate('/login');
     } catch (err: any) {
