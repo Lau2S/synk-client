@@ -23,8 +23,7 @@ import { loginUser } from '../../api/users'; //
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { loginWithGoogle, initAuthObserver, resetPassword, setUser, user } = useAuthStore();
-  const { loginWithGoogle, loginWithFacebook, initAuthObserver, resetPassword, setUser } = useAuthStore();
+  const { loginWithGoogle, loginWithFacebook, initAuthObserver, resetPassword, setUser, user } = useAuthStore();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
