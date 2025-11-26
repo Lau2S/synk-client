@@ -75,10 +75,7 @@ const NavbarDashboard: React.FC = () => {
         );
     };
 
-	useEffect(() => {
-		console.log("[NavbarDashboard] user (store):", user);
-		console.log("[NavbarDashboard] cachedUser:", cachedUser);
-	}, [user, cachedUser]);
+	
 
 	/**
      * Close the menu when clicking outside the menu container.
