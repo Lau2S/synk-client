@@ -125,12 +125,19 @@ const useAuthStore = create<AuthStore>()((set) => ({
     },
 
     /**
-     * Sign out the current Firebase user.
+     * Sign out the current Firebase user and clear all local data.
      */
 
     logout: async () => {
         try {
+            // Limpiar Firebase
             await signOut(auth);
+            
+            // Limpiar localStorage
+            localStorage.removeItem('token');
+            
+            // Limpiar estado local
+            set({ user: null });
         } catch (e: any) {
             console.error(e);
         }

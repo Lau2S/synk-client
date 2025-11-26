@@ -25,6 +25,7 @@ const NavbarDashboard: React.FC = () => {
 	const user = useAuthStore((s) => s.user);
 
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [showLogoutModal, setShowLogoutModal] = useState(false);
 	const menuRef = useRef<HTMLDivElement | null>(null);
 
 	/**
@@ -43,13 +44,21 @@ const NavbarDashboard: React.FC = () => {
 	}, []);
 
 	/**
+     * Show logout confirmation modal
+     */
+	const showLogoutConfirmation = () => {
+		setMenuOpen(false);
+		setShowLogoutModal(true);
+	};
+
+	/**
      * Perform logout via the auth store and navigate to the login page.
      *
      * @async
      * @returns {Promise<void>}
      */
-
 	const handleLogout = async () => {
+		setShowLogoutModal(false);
 		await logout();
 		navigate("/login");
 	};
@@ -83,7 +92,7 @@ const NavbarDashboard: React.FC = () => {
 						<button
 							className="user-menu-item"
 							role="menuitem"
-							onClick={handleLogout}
+							onClick={showLogoutConfirmation}
 						>
 							Cerrar sesión
 						</button>
@@ -91,6 +100,30 @@ const NavbarDashboard: React.FC = () => {
 				)}
 				</div>
 			</div>
+
+			{/* Modal de confirmación de logout */}
+			{showLogoutModal && (
+				<div className="logout-modal-overlay">
+					<div className="logout-modal">
+						<h3>¿Cerrar sesión?</h3>
+						<p>¿Estás seguro de que quieres cerrar tu sesión?</p>
+						<div className="logout-modal-actions">
+							<button 
+								className="logout-cancel-btn" 
+								onClick={() => setShowLogoutModal(false)}
+							>
+								Cancelar
+							</button>
+							<button 
+								className="logout-confirm-btn" 
+								onClick={handleLogout}
+							>
+								Cerrar sesión
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 		</nav>
 	);
 };
