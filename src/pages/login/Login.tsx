@@ -1,7 +1,7 @@
 import type React from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './Login.scss';
 import { loginUser } from '../../api/users'; // 
 
@@ -36,6 +36,12 @@ const Login: React.FC = () => {
   const [sending, setSending] = useState(false);
   const [infoMessage, setInfoMessage] = useState('');
 
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const submitBtnRef = useRef<HTMLButtonElement | null>(null);
+
+
+
   // Redirect if already authenticated
   useEffect(() => {
     const checkAuth = () => {
@@ -63,6 +69,8 @@ const Login: React.FC = () => {
 
    if (!email || !password) {
      setError('Ingresa email y contraseña.');
+     if (!email) emailRef.current?.focus();
+     else passwordRef.current?.focus();
      return;
    }
 
@@ -84,7 +92,10 @@ const Login: React.FC = () => {
      const returnUrl = searchParams.get('returnUrl');
      navigate(returnUrl || '/dashboard');
    } catch (err: any) {
-     setError(err?.message || err?.response?.message || 'Credenciales incorrectas');
+     const msg = err?.message || err?.response?.message || 'Credenciales incorrectas';
+     setError(msg);
+     // dejar foco en botón enviar para que lector de pantalla lo anuncie
+     submitBtnRef.current?.focus();
    } finally {
      setLoading(false);
    }
@@ -170,13 +181,15 @@ const Login: React.FC = () => {
 
   return (
     <div className="container-login">
-      <div className="login-card">
-        <h2>Iniciar Sesión</h2>
+      <div className="login-card" role="region" aria-labelledby="login-title">
+        <h2 id="login-title">Iniciar Sesión</h2>
         <p>Ingresa tus datos para comenzar a usar Synk </p>
 
-        <form className="login-form" onSubmit={handleLogin}>
+        <form className="login-form" onSubmit={handleLogin} aria-describedby={error ? 'form-error' : undefined}>
           <div className="form-group">
+            
             <input
+              ref={emailRef}
               type="email"
               id="email"
               placeholder="Ingresa tu Email"
@@ -184,11 +197,16 @@ const Login: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="form-input"
+              aria-describedby="email-help"
+              aria-invalid={!!error && !email}
+              autoComplete="email"
+              
             />
           </div>
 
           <div className="form-group password-group">
             <input
+              ref={passwordRef}
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Ingresa tu Contraseña"
@@ -196,12 +214,16 @@ const Login: React.FC = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               className="form-input"
+              aria-describedby="password-help"
+              aria-invalid={!!error && !!email && !password}
+              autoComplete="current-password"
             />
             <button
               type="button"
               className="password-toggle"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              aria-pressed={showPassword}
             >
               <img 
                 src={showPassword ? "/eye-crossed.svg" : "/eye.svg"} 
@@ -211,9 +233,10 @@ const Login: React.FC = () => {
             </button>
           </div>
 
-          {error && <div className="form-error">{error}</div>}
+          {error && <div id="form-error" className="form-error" role="alert" aria-live="assertive">{error}</div>}
 
-          <button type="submit" className="login-button" disabled={loading}>
+          <button type="submit" className="login-button" disabled={loading} aria-busy={loading}
+            ref={submitBtnRef}>
             {loading ? 'Ingresando...' : 'Iniciar Sesión'}
           </button>
         </form>
@@ -223,6 +246,7 @@ const Login: React.FC = () => {
             type="button"
             className="forgot-link"
             onClick={() => setShowReset(true)}
+            aria-label="Abrir diálogo de recuperación de contraseña"
           >
             Olvidé mi contraseña
           </button>
@@ -233,7 +257,7 @@ const Login: React.FC = () => {
         </div>
 
         <div className="login-options">
-          <button className="google-login-button" onClick={handleLoginGoogle}>
+          <button className="google-login-button" onClick={handleLoginGoogle} aria-label="Iniciar sesión con Google">
             <img src="logos/google-logo.png" alt="Iniciar sesión con Google" />
             <span>Usa Google</span>
           </button>
@@ -242,6 +266,7 @@ const Login: React.FC = () => {
             className="facebook-login-button"
             onClick={handleLoginFacebook}
             type="button"
+            aria-label="Iniciar sesión con Facebook"
           >
             <img src="logos/facebook-logo.png" alt="Iniciar sesión con Facebook" />
             <span>Usa Facebook</span>
@@ -260,11 +285,11 @@ const Login: React.FC = () => {
         <div className="password-reset-modal" role="dialog" aria-modal="true" aria-label="Recuperar Contraseña">
           <div className="modal-overlay" onClick={() => setShowReset(false)} />
           <div className="modal-content">
-            <button className="modal-close-btn" onClick={() => setShowReset(false)}>✕</button>
+            <button className="modal-close-btn" onClick={() => setShowReset(false)} aria-label="Cerrar diálogo de recuperación de contraseña">✕</button>
             <h2 className="modal-title">Recuperar Contraseña</h2>
             <p className="modal-subtitle">Ingresa tu Email para enviar enlace de recuperación</p>
 
-            <form className="reset-form" onSubmit={handleSendReset}>
+            <form className="reset-form" onSubmit={handleSendReset} aria-describedby={infoMessage ? 'reset-info' : undefined}>
               <input
                 className="reset-input"
                 type="email"
@@ -272,9 +297,10 @@ const Login: React.FC = () => {
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 required
+                aria-label="Email para recuperar contraseña"
               />
 
-              <button type="submit" className="reset-send-btn">
+              <button type="submit" className="reset-send-btn" disabled={sending} aria-busy={sending}>
                 {sending ? 'Enviando...' : 'Enviar'}
               </button>
               <button
@@ -285,7 +311,7 @@ const Login: React.FC = () => {
                 Cancelar
               </button>
 
-              {infoMessage && <div className="reset-info">{infoMessage}</div>}
+              {infoMessage && <div className="reset-info" role="status" aria-live="polite">{infoMessage}</div>}
             </form>
           </div>
         </div>

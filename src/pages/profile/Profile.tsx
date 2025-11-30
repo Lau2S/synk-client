@@ -227,24 +227,65 @@ const Profile: React.FC = () => {
 
             {/* Edit modal */}
             {showEdit && (
-                <div className="profile-modal" role="dialog" aria-modal="true" aria-label="Editar Perfil">
+                <div className="profile-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title" aria-describedby="edit-modal-desc">
                     <div className="modal-overlay" onClick={() => setShowEdit(false)} />
-                    <div className="modal-content">
-                        <button className="modal-close-btn" onClick={() => setShowEdit(false)}>✕</button>
-                        <h2 className="modal-title">Edita Tu Perfil</h2>
-                        <p className="modal-subtitle">Deja en blanco para mantener tu contraseña actual</p>
+                    <div className="modal-content" role="document">
+                        <button className="modal-close-btn" onClick={() => setShowEdit(false)} aria-label="Cerrar diálogo de editar">✕</button>
+                        <h2 id="edit-modal-title" className="modal-title">Edita Tu Perfil</h2>
+                        <p id="edit-modal-desc" className="modal-subtitle">Deja en blanco para mantener la contraseña actual</p>
 
-                        <form className="modal-form" onSubmit={handleEditSubmit}>
-                            <input value={editFirstName} onChange={(e) => setEditFirstName(e.target.value)} placeholder="Nombre" className="modal-input" />
-                            <input value={editLastName} onChange={(e) => setEditLastName(e.target.value)} placeholder="Apellido" className="modal-input" />
-                            <input value={editEmail} onChange={(e) => setEditEmail(e.target.value)} type="email" placeholder="Email" className="modal-input" />
-                            <input value={String(editAge)} onChange={(e) => setEditAge(e.target.value === '' ? '' : Number(e.target.value))} placeholder="Edad" className="modal-input" />
-                            <input value={newPassword} onChange={(e) => setNewPassword(e.target.value)} type="password" placeholder="Nueva Contraseña" className="modal-input" />
-                            <input value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" placeholder="Confirmar nueva contraseña" className="modal-input" />
+                        <form className="modal-form" onSubmit={handleEditSubmit} aria-describedby={editMsg ? 'edit-message' : undefined}>
+                            <input
+                              value={editFirstName}
+                              onChange={(e) => setEditFirstName(e.target.value)}
+                              placeholder="Nombre"
+                              className="modal-input"
+                              aria-label="Nombre"
+                              autoFocus
+                            />
+                            <input
+                              value={editLastName}
+                              onChange={(e) => setEditLastName(e.target.value)}
+                              placeholder="Apellido"
+                              className="modal-input"
+                              aria-label="Apellido"
+                            />
+                            <input
+                              value={editEmail}
+                              onChange={(e) => setEditEmail(e.target.value)}
+                              type="email"
+                              placeholder="Email"
+                              className="modal-input"
+                              aria-label="Email"
+                            />
+                            <input
+                              value={String(editAge)}
+                              onChange={(e) => setEditAge(e.target.value === '' ? '' : Number(e.target.value))}
+                              placeholder="Edad"
+                              className="modal-input"
+                              aria-label="Edad"
+                            />
+                            <input
+                              value={newPassword}
+                              onChange={(e) => setNewPassword(e.target.value)}
+                              type="password"
+                              placeholder="Nueva Contraseña"
+                              className="modal-input"
+                              aria-label="Nueva contraseña"
+                            />
+                            <input
+                              value={confirmPassword}
+                              onChange={(e) => setConfirmPassword(e.target.value)}
+                              type="password"
+                              placeholder="Confirmar nueva contraseña"
+                              className="modal-input"
+                              aria-label="Confirmar nueva contraseña"
+                            />
 
-                            {editMsg && <div className="modal-info">{editMsg}</div>}
+                            {editMsg && <div id="edit-message" className="modal-info" role="alert" aria-live="assertive">{editMsg}</div>}
 
-                            <button type="submit" className="modal-primary-btn" disabled={editSending}>
+                            {/* Mantengo el mismo orden visual: Guardar (submit) luego Cancelar */}
+                            <button type="submit" className="modal-primary-btn" disabled={editSending} aria-busy={editSending}>
                                 {editSending ? 'Guardando...' : 'Guardar'}
                             </button>
                             <button type="button" className="modal-cancel-btn" onClick={() => setShowEdit(false)}>Cancelar</button>
@@ -253,20 +294,28 @@ const Profile: React.FC = () => {
                 </div>
             )}
 
-            {/* Delete modal */}
+            {/* Delete modal (orden visual preservado) */}
             {showDelete && (
-                <div className="profile-modal" role="dialog" aria-modal="true" aria-label="Eliminar Cuenta">
+                <div className="profile-modal" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" aria-describedby="delete-modal-desc">
                     <div className="modal-overlay" onClick={() => setShowDelete(false)} />
-                    <div className="modal-content">
-                        <button className="modal-close-btn" onClick={() => setShowDelete(false)}>✕</button>
-                        <h2 className="modal-title">Eliminar Cuenta</h2>
-                        <p className="modal-subtitle">Esta acción eliminará permanentemente tu cuenta</p>
+                    <div className="modal-content" role="document">
+                        <button className="modal-close-btn" onClick={() => setShowDelete(false)} aria-label="Cerrar diálogo de eliminar">✕</button>
+                        <h2 id="delete-modal-title" className="modal-title">Eliminar Cuenta</h2>
+                        <p id="delete-modal-desc" className="modal-subtitle">Esta acción eliminará permanentemente tu cuenta</p>
 
-                        <form className="modal-form" onSubmit={handleDeleteSubmit}>
-                            <input value={deletePassword} onChange={(e) => setDeletePassword(e.target.value)} type="password" placeholder="Ingresa tu contraseña para confirmar" className="modal-input" />
-                            {deleteMsg && <div className="modal-info">{deleteMsg}</div>}
+                        <form className="modal-form" onSubmit={handleDeleteSubmit} aria-describedby={deleteMsg ? 'delete-message' : undefined}>
+                            <input
+                              value={deletePassword}
+                              onChange={(e) => setDeletePassword(e.target.value)}
+                              type="password"
+                              placeholder="Ingresa tu contraseña para confirmar"
+                              className="modal-input"
+                              aria-label="Contraseña para confirmar eliminación"
+                            />
+                            {deleteMsg && <div id="delete-message" className="modal-info" role="alert" aria-live="assertive">{deleteMsg}</div>}
 
-                            <button type="button" className="modal-danger-btn" onClick={() => handleDeleteSubmit()} disabled={deleteSending}>
+                            {/* Mantengo el mismo orden visual: Eliminar (confirm) luego Cancelar */}
+                            <button type="button" className="modal-danger-btn" onClick={() => handleDeleteSubmit()} disabled={deleteSending} aria-busy={deleteSending}>
                                 {deleteSending ? 'Eliminando...' : 'Eliminar'}
                             </button>
                             <button type="button" className="modal-cancel-btn" onClick={() => setShowDelete(false)}>Cancelar</button>

@@ -10,19 +10,21 @@ import "./Footer.scss";
  */
 const Footer: React.FC = () => {
   return (
-    <footer>
-      {/* <p>©2025 Synk. Todos los derechos reservados.</p> */}
-      <Link to="/mapa-sitio">Mapa del Sitio</Link>
-      <span className="footer-separator"> | </span>
-      <a 
-        href="/manual-usuario-synk.pdf" 
-        target="_blank" 
+    <footer role="contentinfo" aria-label="Pie de página de Synk" className="app-footer">
+      <Link to="/mapa-sitio" aria-label="Ir al mapa del sitio">
+        Mapa del Sitio
+      </Link>
+      <span className="footer-separator" aria-hidden="true"> | </span>
+      <a
+        href="/manual-usuario-synk.pdf"
+        target="_blank"
         rel="noopener noreferrer"
+        aria-label="Abrir manual de usuario en una nueva pestaña (PDF)"
       >
         Manual de Usuario
       </a>
 
-      <p>©2025 Synk. Todos los derechos reservados.</p>
+      <p aria-hidden="false">©2025 Synk. Todos los derechos reservados.</p>
     </footer>
   );
 };

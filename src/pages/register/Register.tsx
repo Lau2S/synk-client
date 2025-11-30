@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import useAuthStore from '../../stores/useAuthStore';
 import './Register.scss';
@@ -42,6 +42,20 @@ const Register: React.FC = () => {
     hasSpecialChar: false,
   });
   const [passwordMatch, setPasswordMatch] = useState<boolean | null>(null);
+
+  const nameRef = useRef<HTMLInputElement | null>(null);
+  const emailRef = useRef<HTMLInputElement | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
+  const confirmRef = useRef<HTMLInputElement | null>(null);
+  const submitRef = useRef<HTMLButtonElement | null>(null);
+  const errorRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    // focus first input for keyboard users
+    nameRef.current?.focus();
+  }, []);
+
+  
 
   /**
    * Initialize authentication observer on mount if provided by the auth store.
@@ -162,10 +176,12 @@ const Register: React.FC = () => {
         <h2>Registrate</h2>
         <p>Crea una cuenta en Synk para acceder a la aplicación </p>
 
-        <form className="register-form" onSubmit={handleSubmit}>
-          
+        <form className="register-form" onSubmit={handleSubmit} aria-describedby="register-desc" noValidate>
           <div className="form-group">
+            {/* visually hidden label to avoid visual change but improve perceptibility */}
+            
             <input
+              ref={nameRef}
               type="text"
               id="name"
               placeholder="Ingresa tu Nombre"
@@ -173,10 +189,13 @@ const Register: React.FC = () => {
               onChange={(e) => setName(e.target.value)}
               required
               className="form-input"
+              aria-required="true"
+              aria-label="Nombre"
             />
           </div>
 
           <div className="form-group">
+            
             <input
               type="text"
               id="lastName"
@@ -184,24 +203,27 @@ const Register: React.FC = () => {
               value={lastName}
               onChange={(e) => setLastName(e.target.value)}
               className="form-input"
+              aria-label="Apellido"
             />
           </div>
 
           <div className="form-group">
+            
             <input
               type="number"
               id="edad"
               placeholder="Ingresa tu Edad"
               value={age === '' ? '' : String(age)}
-              onChange={(e) =>
-                setAge(e.target.value === '' ? '' : Number(e.target.value))
-              }
+              onChange={(e) => setAge(e.target.value === '' ? '' : Number(e.target.value))}
               className="form-input"
+              aria-label="Edad"
             />
           </div>
 
           <div className="form-group">
+            
             <input
+              ref={emailRef}
               type="email"
               id="email"
               placeholder="Ingresa tu Email"
@@ -209,11 +231,16 @@ const Register: React.FC = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               className="form-input"
+              aria-required="true"
+              aria-label="Email"
+              autoComplete="email"
             />
           </div>
 
           <div className="form-group password-group">
+            
             <input
+              ref={passwordRef}
               type={showPassword ? "text" : "password"}
               id="password"
               placeholder="Ingresa tu Contraseña"
@@ -221,41 +248,45 @@ const Register: React.FC = () => {
               onChange={handlePasswordChange}
               required
               className="form-input"
+              aria-required="true"
+              aria-label="Contraseña"
+              aria-describedby="password-requirements"
             />
             <button
               type="button"
               className="password-toggle"
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              aria-pressed={showPassword}
             >
-              <img 
-                src={showPassword ? "/eye-crossed.svg" : "/eye.svg"} 
-                alt={showPassword ? "Ocultar" : "Mostrar"} 
+              <img
+                src={showPassword ? "/eye-crossed.svg" : "/eye.svg"}
+                alt={showPassword ? "Ocultar" : "Mostrar"}
                 className="toggle-icon"
               />
             </button>
             {password && (
-              <div className="password-requirements">
-                <p>La contraseña debe contener:</p>
+              <div className="password-requirements" id="password-requirements" aria-live="polite">
+                <p className="sr-only">Requisitos de contraseña</p>
                 <ul>
                   <li className={passwordValidation.minLength ? "valid" : ""}>
-                    <span className="icon">{passwordValidation.minLength ? '✓' : '✗'}</span>
+                    <span className="icon" aria-hidden>{passwordValidation.minLength ? '✓' : '✗'}</span>
                     Al menos 8 caracteres
                   </li>
                   <li className={passwordValidation.hasUpperCase ? "valid" : ""}>
-                    <span className="icon">{passwordValidation.hasUpperCase ? '✓' : '✗'}</span>
+                    <span className="icon" aria-hidden>{passwordValidation.hasUpperCase ? '✓' : '✗'}</span>
                     Una letra mayúscula
                   </li>
                   <li className={passwordValidation.hasLowerCase ? "valid" : ""}>
-                    <span className="icon">{passwordValidation.hasLowerCase ? '✓' : '✗'}</span>
+                    <span className="icon" aria-hidden>{passwordValidation.hasLowerCase ? '✓' : '✗'}</span>
                     Una letra minúscula
                   </li>
                   <li className={passwordValidation.hasNumber ? "valid" : ""}>
-                    <span className="icon">{passwordValidation.hasNumber ? '✓' : '✗'}</span>
+                    <span className="icon" aria-hidden>{passwordValidation.hasNumber ? '✓' : '✗'}</span>
                     Un número
                   </li>
                   <li className={passwordValidation.hasSpecialChar ? "valid" : ""}>
-                    <span className="icon">{passwordValidation.hasSpecialChar ? '✓' : '✗'}</span>
+                    <span className="icon" aria-hidden>{passwordValidation.hasSpecialChar ? '✓' : '✗'}</span>
                     Un carácter especial (!@#$%^&*...)
                   </li>
                 </ul>
@@ -264,7 +295,9 @@ const Register: React.FC = () => {
           </div>
 
           <div className="form-group password-group">
+            
             <input
+              ref={confirmRef}
               type={showConfirmPassword ? "text" : "password"}
               id="confirmPassword"
               placeholder="Confirma tu Contraseña"
@@ -272,23 +305,26 @@ const Register: React.FC = () => {
               onChange={handleConfirmPasswordChange}
               required
               className="form-input"
+              aria-required="true"
+              aria-label="Confirmar contraseña"
             />
             <button
               type="button"
               className="password-toggle"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               aria-label={showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              aria-pressed={showConfirmPassword}
             >
-              <img 
-                src={showConfirmPassword ? "/eye-crossed.svg" : "/eye.svg"} 
-                alt={showConfirmPassword ? "Ocultar" : "Mostrar"} 
+              <img
+                src={showConfirmPassword ? "/eye-crossed.svg" : "/eye.svg"}
+                alt={showConfirmPassword ? "Ocultar" : "Mostrar"}
                 className="toggle-icon"
               />
             </button>
             {confirmPassword && passwordMatch !== null && (
-              <div className="password-match-validation">
+              <div className="password-match-validation" aria-live="polite">
                 <div className={`match-indicator ${passwordMatch ? 'valid' : 'invalid'}`}>
-                  <span className="icon">{passwordMatch ? '✓' : '✗'}</span>
+                  <span className="icon" aria-hidden>{passwordMatch ? '✓' : '✗'}</span>
                   <span className="text">
                     {passwordMatch ? 'Las contraseñas coinciden' : 'Las contraseñas no coinciden'}
                   </span>
@@ -297,9 +333,20 @@ const Register: React.FC = () => {
             )}
           </div>
 
-          {error && <div className="form-error">{error}</div>}
+          {error && (
+            <div className="form-error" role="alert" aria-live="assertive" tabIndex={-1} ref={errorRef}>
+              {error}
+            </div>
+          )}
 
-          <button type="submit" className="register-button" disabled={loading}>
+          <button
+            ref={submitRef}
+            type="submit"
+            className="register-button"
+            disabled={loading}
+            aria-busy={loading}
+            aria-label="Registrarse"
+          >
             {loading ? 'Registrando...' : 'Registrarse'}
           </button>
         </form>
