@@ -95,6 +95,76 @@ const Meeting: React.FC = () => {
   useEffect(() => {
     if (!meetingId) return;
 
+    
+    
+
+    // Helper to (re)create Peer instance with retry on error
+    const initPeer = (attempt = 0) => {
+      try {
+        if (peerRef.current) return;
+        console.log('Inicializando PeerJS (attempt)', attempt);
+        peerRef.current = new Peer({
+          host: 'localhost',
+          port: 4000,
+          path: '/peerjs',
+          secure: false,
+          // @ts-ignore - debug not in types
+          debug: 2
+        } as any);
+
+        peerRef.current.on('open', (peerId: string) => {
+          (window as any).__PEER_ID__ = peerId;
+          console.log('Peer open id', peerId);
+          (window as any).__PEER_REF__ = peerRef.current;
+          (window as any).__REMOTE_AUDIO_ELES__ = remoteAudioEls;
+          (window as any).__LOCAL_STREAM_REF__ = localStreamRef;
+          emitJoinIfReady();
+        });
+
+        peerRef.current.on('error', (err: any) => {
+          console.error('PeerJS error', err);
+          try { peerRef.current?.destroy?.(); } catch {}
+          peerRef.current = null;
+          // retry with backoff, but stop after 5 attempts
+          if (attempt < 5) {
+            setTimeout(() => initPeer(attempt + 1), 1000 * (attempt + 1));
+            return;
+          }
+          // after retries, try a cloud/default Peer as fallback (helps debug if local PeerServer is unreachable)
+          try {
+            console.warn('PeerJS fallback: creating default Peer() (cloud) after repeated failures');
+            const fallback = new Peer(); // uses default Peer server — for debugging only
+            fallback.on('open', (id: string) => {
+              (window as any).__PEER_ID__ = id;
+              peerRef.current = fallback;
+              console.log('Fallback Peer open id', id);
+              emitJoinIfReady();
+            });
+            fallback.on('error', (e: any) => console.error('Fallback Peer error', e));
+            fallback.on('call', (call: any) => {
+              try { call.answer(localStreamRef.current || undefined); } catch { try { call.answer(); } catch {} }
+              call.on('stream', (remoteStream: MediaStream) => attachRemoteStream(call.peer, remoteStream));
+            });
+          } catch (fallbackErr) {
+            console.error('Fallback Peer creation failed', fallbackErr);
+          }
+        });
+
+        peerRef.current.on('call', (call: any) => {
+          console.log('Peer incoming call from', call.peer);
+          try { call.answer(localStreamRef.current || undefined); } catch (e) { try { call.answer(); } catch {} }
+          call.on('stream', (remoteStream: MediaStream) => attachRemoteStream(call.peer, remoteStream));
+        });
+      } catch (err) {
+        console.error('initPeer failed', err);
+        peerRef.current = null;
+        if (attempt < 5) setTimeout(() => initPeer(attempt + 1), 1000 * (attempt + 1));
+      }
+    };
+
+    // call initPeer once
+    initPeer();
+
     const emitJoinIfReady = () => {
         const peerIdNow = (window as any).__PEER_ID__ || null;
         const userIdNow = (user as any)?.uid || (user as any)?.id || user?.email || 'anonymous';
