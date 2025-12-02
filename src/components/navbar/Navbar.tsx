@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import "./Navbar.scss";
 
 /**
@@ -14,34 +14,44 @@ const Navbar: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <nav>
+    <nav className="site-nav" role="navigation" aria-label="Navegación principal">
       <div className="nav-container">
-        <Link to="/" className="nav-logo-link">
-          <img
-            src="/logo-synk.png"
-            alt="Synk Logo"
-            className="nav-logo"
-          />      
-        </Link>
-      
-        {/* Navigation Links - Always visible */}
-        <div className="nav-links">
-          <Link to="/">Inicio</Link>
-          <Link to="/about-us">Sobre Nosotros</Link>
-          <Link to="/site-map">Mapa del Sitio</Link>
-        </div>
-        
-        {/* Auth Buttons - Always visible */}
-        <div className="auth-buttons">
-          <button 
-            className="btn-register" 
+        <NavLink to="/" className="nav-logo-link" aria-label="Ir a la página principal" tabIndex={0}>
+          <img src="/logo-synk.png" alt="Synk" className="nav-logo" />
+        </NavLink>
+
+        <ul className="nav-links" role="menubar" aria-label="Enlaces principales">
+          <li role="none">
+            <NavLink to="/" role="menuitem" end className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Inicio
+            </NavLink>
+          </li>
+          <li role="none">
+            <NavLink to="/about-us" role="menuitem" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Sobre Nosotros
+            </NavLink>
+          </li>
+          <li role="none">
+            <NavLink to="/site-map" role="menuitem" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Mapa del Sitio
+            </NavLink>
+          </li>
+        </ul>
+
+        <div className="auth-buttons" role="group" aria-label="Acciones de autenticación">
+          <button
+            className="btn-register"
             onClick={() => navigate("/register")}
+            aria-label="Regístrate en Synk"
           >
             Regístrate
           </button>
-          <button 
-            className="btn-login" 
+
+          <button
+            className="btn-login"
             onClick={() => navigate("/login")}
+            aria-label="Inicia sesión en Synk"
+            tabIndex={0}
           >
             Inicia Sesión
           </button>

@@ -28,6 +28,10 @@ const NavbarDashboard: React.FC = () => {
 	const [showLogoutModal, setShowLogoutModal] = useState(false);
     const menuRef = useRef<HTMLDivElement | null>(null);
 
+	const firstMenuItemRef = useRef<HTMLAnchorElement | null>(null);
+    const secondMenuItemRef = useRef<HTMLButtonElement | null>(null);
+    const userButtonRef = useRef<HTMLButtonElement | null>(null);
+
 	const [cachedUser, setCachedUser] = useState<any | null>(() => {
 		if (user) return user;
 		try { return JSON.parse(localStorage.getItem('user') || 'null'); } catch { return null; }
@@ -92,6 +96,44 @@ const NavbarDashboard: React.FC = () => {
 		return () => document.removeEventListener("mousedown", handler);
 	}, []);
 
+	useEffect(() => {
+        if (menuOpen) {
+            // small delay to ensure DOM is ready
+            setTimeout(() => firstMenuItemRef.current?.focus(), 0);
+        } else {
+            // restore focus to user button when menu closes
+            userButtonRef.current?.focus();
+        }
+    }, [menuOpen]);
+
+	const onUserButtonKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setMenuOpen((s) => !s);
+        } else if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setMenuOpen(true);
+        }
+    };
+
+	const onMenuKeyDown = (e: React.KeyboardEvent) => {
+        const items = [firstMenuItemRef.current, secondMenuItemRef.current].filter(Boolean) as HTMLElement[];
+        const idx = items.indexOf(document.activeElement as HTMLElement);
+        if (e.key === "Escape") {
+            setMenuOpen(false);
+            return;
+        }
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            const next = items[(idx + 1) % items.length];
+            next?.focus();
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            const prev = items[(idx - 1 + items.length) % items.length];
+            prev?.focus();
+        }
+    };
+
 	/**
      * Show logout confirmation modal
      */
@@ -112,69 +154,104 @@ const NavbarDashboard: React.FC = () => {
 		navigate("/login");
 	};
 
+	const logoutCancelRef = useRef<HTMLButtonElement | null>(null);
+    const logoutConfirmRef = useRef<HTMLButtonElement | null>(null);
+    useEffect(() => {
+        if (showLogoutModal) {
+            setTimeout(() => logoutCancelRef.current?.focus(), 0);
+            const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setShowLogoutModal(false); };
+            document.addEventListener("keydown", onKey);
+            return () => document.removeEventListener("keydown", onKey);
+        }
+    }, [showLogoutModal]);
+
 	return (
-		<nav className="navbar-dashboard">
-			<div className="nav-container">
-				<div className="nav-left">
-					<Link to="/dashboard" className="nav-logo-link">
-						<img src="/logo-synk.png" alt="Logo" className="nav-logo" />
-					</Link>
-				</div>
+		<nav className="navbar-dashboard" role="navigation" aria-label="Barra de navegación principal">
+            <div className="nav-container">
+                <div className="nav-left">
+                    <Link to="/dashboard" className="nav-logo-link" aria-label="Ir al panel">
+                        <img src="/logo-synk.png" alt="Logo Synk" className="nav-logo" />
+                    </Link>
+                </div>
 
-				<div className="nav-right" ref={menuRef}>
-				<button
-                    className="user-btn"
-                    aria-haspopup="true"
-                    aria-expanded={menuOpen}
-                    onClick={() => setMenuOpen((s) => !s)}
-                    title={displayNameTitle()}
-                >
-                    <span className="user-initial">
-                        {getUserInitial()}
-                    </span>
-                </button>
+                <div className="nav-right" ref={menuRef}>
+                    <button
+                        ref={userButtonRef}
+                        className="user-btn"
+                        aria-haspopup="true"
+                        aria-controls="user-menu"
+                        aria-expanded={menuOpen}
+                        onClick={() => setMenuOpen((s) => !s)}
+                        onKeyDown={onUserButtonKeyDown}
+                        title={displayNameTitle()}
+                        aria-label={`Abrir menú de usuario, ${displayNameTitle()}`}
+                    >
+                        <span className="user-initial" aria-hidden="false">
+                            {getUserInitial()}
+                        </span>
+                    </button>
 
-				{menuOpen && (
-					<div className="user-menu" role="menu">
-						<Link to="/profile" className="user-menu-item" role="menuitem">
-							Perfil
-						</Link>
-						<button
-							className="user-menu-item"
-							role="menuitem"
-							onClick={showLogoutConfirmation}
-						>
-							Cerrar sesión
-						</button>
-					</div>
-				)}
-				</div>
-			</div>
+                    {menuOpen && (
+                        <div
+                            id="user-menu"
+                            className="user-menu"
+                            role="menu"
+                            aria-label="Menú de usuario"
+                            onKeyDown={onMenuKeyDown}
+                        >
+                            <Link
+                                to="/profile"
+                                className="user-menu-item"
+                                role="menuitem"
+                                ref={firstMenuItemRef}
+                            >
+                                Perfil
+                            </Link>
+                            <button
+                                className="user-menu-item"
+                                role="menuitem"
+                                onClick={showLogoutConfirmation}
+                                ref={secondMenuItemRef}
+                            >
+                                Cerrar sesión
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
 
-			{/* Modal de confirmación de logout */}
-			{showLogoutModal && (
-				<div className="logout-modal-overlay">
-					<div className="logout-modal">
-						<h3>¿Cerrar sesión?</h3>
-						<p>¿Estás seguro de que quieres cerrar tu sesión?</p>
-						<div className="logout-modal-actions">
-							<button 
-								className="logout-cancel-btn" 
-								onClick={() => setShowLogoutModal(false)}
-							>
-								Cancelar
-							</button>
-							<button 
-								className="logout-confirm-btn" 
-								onClick={handleLogout}
-							>
-								Cerrar sesión
-							</button>
-						</div>
-					</div>
-				</div>
-			)}
-		</nav>
+            {/* Modal de confirmación de logout */}
+            {showLogoutModal && (
+                <div className="logout-modal-overlay" role="presentation" aria-hidden={false}>
+                    <div
+                        className="logout-modal"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-labelledby="logout-modal-title"
+                        aria-describedby="logout-modal-desc"
+                    >
+                        <h3 id="logout-modal-title">¿Cerrar sesión?</h3>
+                        <p id="logout-modal-desc">¿Estás seguro de que quieres cerrar tu sesión?</p>
+                        <div className="logout-modal-actions">
+                            <button
+                                className="logout-cancel-btn"
+                                onClick={() => setShowLogoutModal(false)}
+                                ref={logoutCancelRef}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className="logout-confirm-btn"
+                                onClick={handleLogout}
+                                ref={logoutConfirmRef}
+                            >
+                                Cerrar sesión
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </nav>
 	);
 };
 

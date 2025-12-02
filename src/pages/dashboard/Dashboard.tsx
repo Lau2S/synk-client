@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import './Dashboard.scss';
 import CameraIcon from '/logos/camera.svg?url';
 import CodeIcon from '/logos/code.svg?url';
@@ -26,6 +26,15 @@ const Dashboard: React.FC = () => {
     const [joinMeetingId, setJoinMeetingId] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+    const joinInputRef = useRef<HTMLInputElement | null>(null);
+
+    useEffect(() => {
+        // focus join input on mount for keyboard users
+        joinInputRef.current?.setAttribute('tabindex', '0');
+        joinInputRef.current?.focus();
+    }, []);
 
     /**
      * Handle creating a new meeting
