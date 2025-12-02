@@ -26,7 +26,6 @@ const Dashboard: React.FC = () => {
     const [joinMeetingId, setJoinMeetingId] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
     const joinInputRef = useRef<HTMLInputElement | null>(null);
 
