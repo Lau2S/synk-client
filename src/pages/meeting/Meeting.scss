@@ -35,9 +35,10 @@ $color-buttons: #3ec7cd;
 .participants-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 350px));
+  gap: 1.2rem;
   align-content: start;
+  justify-content: center;
   overflow-y: auto;
   padding-right: 0.5rem;
 
@@ -75,14 +76,14 @@ $color-buttons: #3ec7cd;
     justify-content: center;
 
     .avatar-large {
-      width: 100px;
-      height: 100px;
+      width: 90px;
+      height: 90px;
       border-radius: 50%;
       background: $color-buttons;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
+      font-size: 2.2rem;
       font-weight: 700;
       color: $white;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
@@ -381,7 +382,7 @@ $color-buttons: #3ec7cd;
 // Responsive
 @media (max-width: 1200px) {
   .participants-grid {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 320px));
   }
 
   .chat-panel {
@@ -400,7 +401,7 @@ $color-buttons: #3ec7cd;
   }
 
   .participants-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 280px));
     max-height: calc(100vh - 400px);
   }
 }
