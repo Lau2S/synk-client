@@ -6,6 +6,19 @@ import useAuthStore from '../../stores/useAuthStore';
 import { getMeeting, endMeeting as endMeetingAPI } from '../../api/meetings';
 import Peer from 'peerjs';
 
+
+const API_HOST = (import.meta.env.VITE_API_HOST as string) || 'http://localhost:4000';
+const PEER_HOST = new URL(API_HOST).hostname;
+const PEER_SECURE = API_HOST.startsWith('https://');
+const PEER_PORT = PEER_SECURE ? 443 : (new URL(API_HOST).port ? Number(new URL(API_HOST).port) : 80);
+
+const rtcConfig = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' }
+  ]
+};
+
 /**
  * Participant representation used in the meeting UI.
  *
@@ -104,10 +117,11 @@ const Meeting: React.FC = () => {
         if (peerRef.current) return;
         console.log('Inicializando PeerJS (attempt)', attempt);
         peerRef.current = new Peer({
-          host: 'localhost',
-          port: 4000,
+          host: PEER_HOST,
+          port: PEER_PORT,
           path: '/peerjs',
-          secure: false,
+          secure: PEER_SECURE,
+          config: rtcConfig,
           // @ts-ignore - debug not in types
           debug: 2
         } as any);
@@ -177,15 +191,12 @@ const Meeting: React.FC = () => {
     // init PeerJS client (only options form)
     if (!peerRef.current) {
       peerRef.current = new Peer({
-        host: 'localhost',
-        port: 4000,
+        host: PEER_HOST,
+        port: PEER_PORT,
         path: '/peerjs',
-        secure: false,
+        secure: PEER_SECURE,
+        config: rtcConfig
       } as any);
-
-      
-
-      
 
       peerRef.current.on('open', (peerId: string) => {
         (window as any).__PEER_ID__ = peerId;
