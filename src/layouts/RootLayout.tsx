@@ -31,7 +31,7 @@ const RootLayout: React.FC = () => {
 
   return (
     <div className="root-layout">
-      <a className="skip-link" href="#main-content">Saltar al contenido</a>
+      
 
     {!hideNavbar && (useAuthNavbar ? <NavbarDashboard /> : <Navbar />)}
     <main id="main-content" className="main-content" role="main">
