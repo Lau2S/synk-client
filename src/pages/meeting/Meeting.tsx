@@ -476,59 +476,65 @@ const Meeting: React.FC = () => {
   }, [isMicOn, isCameraOn, participants]);
 
   const toggleCamera = useCallback(() => {
-    const enabling = !isCameraOn;
-    (async () => {
-      if (enabling) {
-        try {
-          const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+  const enabling = !isCameraOn;
+  (async () => {
+    if (enabling) {
+      try {
+        const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
 
-          // Crear un nuevo MediaStream que combine audio (si existe) + video
-          const combinedStream = new MediaStream();
+        // Crear un nuevo MediaStream que combine audio (si existe) + video
+        const combinedStream = new MediaStream();
 
-          // Añadir tracks de audio si ya estaban activos
-          if (localStreamRef.current) {
-            localStreamRef.current.getAudioTracks().forEach(track => combinedStream.addTrack(track));
-          }
-
-          // Añadir tracks de video nuevos
-          videoStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
-
-          // Actualizar la referencia
-          localStreamRef.current = combinedStream;
-          setLocalVideoStream(combinedStream);
-          setIsCameraOn(true);
-
-          // Llamar a todos los peers con el stream combinado
-          const peersToCall = participants.filter(p => p.peerId && p.peerId !== (window as any).__PEER_ID__);
-          peersToCall.forEach(p => {
-            try {
-              const call = peerRef.current.call(p.peerId, combinedStream);
-              call.on('stream', (remoteStream: MediaStream) => {
-                console.log('Received stream back from', p.peerId);
-                attachRemoteStream(p.peerId!, remoteStream);
-              });
-            } catch (err) {
-              console.warn('call error for video', p.peerId, err);
-            }
-          });
-        } catch (err) {
-          console.warn('Camera access denied or error:', err);
-          setIsCameraOn(false);
-          setLocalVideoStream(null);
-          return;
+        // Añadir tracks de audio si ya estaban activos
+        if (localStreamRef.current) {
+          localStreamRef.current.getAudioTracks().forEach(track => combinedStream.addTrack(track));
         }
-      } else {
-        // Deshabilitar video tracks
-        localStreamRef.current?.getVideoTracks().forEach(t => {
-          t.stop();
-          localStreamRef.current?.removeTrack(t);
+
+        // Añadir tracks de video nuevos
+        videoStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+
+        // Actualizar la referencia
+        localStreamRef.current = combinedStream;
+        setLocalVideoStream(combinedStream);
+        setIsCameraOn(true);
+
+        // Llamar a todos los peers con el stream combinado
+        const peersToCall = participants.filter(p => p.peerId && p.peerId !== (window as any).__PEER_ID__);
+        peersToCall.forEach(p => {
+          try {
+            const call = peerRef.current.call(p.peerId, combinedStream);
+            call.on('stream', (remoteStream: MediaStream) => {
+              console.log('Received stream back from', p.peerId);
+              attachRemoteStream(p.peerId!, remoteStream);
+            });
+          } catch (err) {
+            console.warn('call error for video', p.peerId, err);
+          }
         });
+      } catch (err) {
+        console.warn('Camera access denied or error:', err);
         setIsCameraOn(false);
         setLocalVideoStream(null);
+        return;
       }
-      try { socket.emit('toggle-video', { enabled: enabling }); } catch (err) { console.warn('socket not connected', err); }
-    })();
-  }, [isCameraOn, participants]);
+    } else {
+      // Deshabilitar video tracks
+      localStreamRef.current?.getVideoTracks().forEach(t => {
+        t.stop();
+        localStreamRef.current?.removeTrack(t);
+      });
+      setIsCameraOn(false);
+      setLocalVideoStream(null);
+
+      // NUEVO: Eliminar el stream de TODOS los peers para que muestren el avatar
+      Object.keys(remoteStreamsRef.current).forEach(peerId => {
+        delete remoteStreamsRef.current[peerId];
+      });
+      forceRemoteRender(x => x + 1); // Forzar re-render
+    }
+    try { socket.emit('toggle-video', { enabled: enabling }); } catch (err) { console.warn('socket not connected', err); }
+  })();
+}, [isCameraOn, participants]);
 
   // helper to attach remote stream to audio element
   const attachRemoteStream = (peerId: string, stream: MediaStream) => {
@@ -711,7 +717,7 @@ const Meeting: React.FC = () => {
       </div>
 
       {localVideoStream && (
-        <div className="local-preview" aria-label="Vista previa de tu cámara">
+        <div className={`local-preview ${isChatOpen ? 'chat-open' : ''}`} aria-label="Vista previa de tu cámara">
           <video
             ref={(el) => {
               if (el && localVideoStream && el.srcObject !== localVideoStream) {
