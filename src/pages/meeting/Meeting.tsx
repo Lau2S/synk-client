@@ -19,15 +19,6 @@ const rtcConfig = {
   ]
 };
 
-/**
- * Participant representation used in the meeting UI.
- *
- * @typedef {Object} Participant
- * @property {number} id - Unique participant identifier.
- * @property {string} name - Full display name.
- * @property {string} initial - Single-character initial shown in avatar.
- */
-
 interface Participant {
   id: number;
   name: string;
@@ -42,31 +33,13 @@ interface ParticipantWithMedia extends Participant {
   videoEnabled?: boolean;
 }
 
-/**
- * Meeting page component.
- *
- * Renders a grid of participant video placeholders, an optional chat panel,
- * and meeting controls (microphone, camera, hang up, chat toggle).
- *
- * Local state:
- * - isChatOpen: whether the chat panel is visible.
- * - chatMessage: current text in the chat input.
- * - messages: list of chat messages shown in the chat panel.
- * - isMicOn / isCameraOn: booleans for mic/camera toggle UI.
- *
- * No props.
- *
- * @component
- * @returns {JSX.Element} The meeting UI.
- */
-
 const Meeting: React.FC = () => {
   const navigate = useNavigate();
   const { meetingId } = useParams<{ meetingId: string }>();
   const user = useAuthStore((s) => s.user);
 
   const [meeting, setMeeting] = useState<any>(null);
-  console.log('Meeting data:', meeting); // Para evitar warning de variable no usada
+  console.log('Meeting data:', meeting);
   const [loading, setLoading] = useState(true);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState('');
@@ -76,10 +49,8 @@ const Meeting: React.FC = () => {
   const [localVideoStream, setLocalVideoStream] = useState<MediaStream | null>(null);
   const remoteStreamsRef = useRef<Record<string, MediaStream>>({});
 
-  const [, forceRemoteRender] = useState(0); // simple ticker para re-render
+  const [, forceRemoteRender] = useState(0);
 
-
-  // Cargar datos de la reunión
   useEffect(() => {
     const loadMeeting = async () => {
       if (!meetingId) {
@@ -101,34 +72,44 @@ const Meeting: React.FC = () => {
     loadMeeting();
   }, [meetingId, navigate]);
 
-  const [participants, setParticipants] = useState<ParticipantWithMedia[]>(() => ([
-
-  ]));
+  const [participants, setParticipants] = useState<ParticipantWithMedia[]>([]);
 
   const chatMessagesRef = useRef<HTMLDivElement | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
-  const peerRef = useRef<any | null>(null); // Peer instance
+  const peerRef = useRef<any | null>(null);
   const remoteAudioEls = useRef<Record<string, HTMLAudioElement>>({});
   const remoteVideoEls = useRef<Record<string, HTMLVideoElement>>({});
 
   useEffect(() => {
     if (!meetingId) return;
 
+    const emitJoinIfReady = () => {
+      const peerIdNow = (window as any).__PEER_ID__ || null;
+      const userIdNow = (user as any)?.uid || (user as any)?.id || user?.email || 'anonymous';
+      if (socket.connected && peerIdNow) {
+        console.log('Emitiendo join-meeting (ready)', { meetingId, userId: userIdNow, peerId: peerIdNow });
+        socket.emit('join-meeting', { meetingId, userId: userIdNow, peerId: peerIdNow });
+      }
+    };
 
+    const attachRemoteStream = (peerId: string, stream: MediaStream) => {
+      remoteStreamsRef.current[peerId] = stream;
+      forceRemoteRender(x => x + 1);
+      console.log('attachRemoteStream', peerId, stream);
+    };
 
-
-    // Helper to (re)create Peer instance with retry on error
+    // Inicialización ÚNICA de PeerJS
     const initPeer = (attempt = 0) => {
       try {
         if (peerRef.current) return;
         console.log('Inicializando PeerJS (attempt)', attempt);
+        
         peerRef.current = new Peer({
           host: PEER_HOST,
           port: PEER_PORT,
           path: '/peerjs',
           secure: PEER_SECURE,
           config: rtcConfig,
-          // @ts-ignore - debug not in types
           debug: 2
         } as any);
 
@@ -145,15 +126,15 @@ const Meeting: React.FC = () => {
           console.error('PeerJS error', err);
           try { peerRef.current?.destroy?.(); } catch { }
           peerRef.current = null;
-          // retry with backoff, but stop after 5 attempts
+          
           if (attempt < 5) {
             setTimeout(() => initPeer(attempt + 1), 1000 * (attempt + 1));
             return;
           }
-          // after retries, try a cloud/default Peer as fallback (helps debug if local PeerServer is unreachable)
+          
           try {
             console.warn('PeerJS fallback: creating default Peer() (cloud) after repeated failures');
-            const fallback = new Peer(); // uses default Peer server — for debugging only
+            const fallback = new Peer();
             fallback.on('open', (id: string) => {
               (window as any).__PEER_ID__ = id;
               peerRef.current = fallback;
@@ -182,19 +163,8 @@ const Meeting: React.FC = () => {
       }
     };
 
-    // call initPeer once
     initPeer();
 
-    const emitJoinIfReady = () => {
-      const peerIdNow = (window as any).__PEER_ID__ || null;
-      const userIdNow = (user as any)?.uid || (user as any)?.id || user?.email || 'anonymous';
-      if (socket.connected && peerIdNow) {
-        console.log('Emitiendo join-meeting (ready)', { meetingId, userId: userIdNow, peerId: peerIdNow });
-        socket.emit('join-meeting', { meetingId, userId: userIdNow, peerId: peerIdNow });
-      }
-    };
-
-    // connect socket and emit join only when both socket + peer ready
     const onConnect = () => {
       console.log('Socket connected', socket.id);
       emitJoinIfReady();
@@ -314,7 +284,6 @@ const Meeting: React.FC = () => {
     socket.on('user-left', onUserLeft);
     socket.on('receiveMessage', onReceive);
 
-    // Ensure chat socket connects and joins room (server expects a string roomId)
     chatSocket.connect();
     const chatOnConnect = () => {
       console.log('Chat socket connected, joining room', meetingId, 'socketId=', chatSocket.id);
@@ -355,51 +324,29 @@ const Meeting: React.FC = () => {
     }
   };
 
-  // Para evitar warning, la función está lista para usar cuando se implemente
   console.log('End meeting function ready:', handleEndMeeting);
-
-  /**
-   * Handle sending a chat message.
-   *
-   * Appends a new message to the messages array with the current time and
-   * clears the input. Prevents default form submission behavior.
-   *
-   * @param {React.FormEvent} e - Form submit event.
-   * @returns {void}
-   */
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
     const text = chatMessage.trim();
     if (!text) return;
 
-    // usar nombre real del usuario si está disponible; incluir senderId para que el servidor
-    // lo reenvíe y podamos identificar el autor y mostrar "Tú" solo en su cliente.
     const senderName = user?.displayName ?? user?.email ?? 'Anon';
-    const senderId = socket.id; // se obtiene después de socket.connect()
+    const senderId = socket.id;
 
-    // emitir al servidor (sin agregar localmente para evitar duplicados)
     chatSocket.emit('sendMessage', { roomId: meetingId, sender: senderName, senderId, message: text });
-
-    // No hacer append local: esperar al evento 'receiveMessage' del servidor
     setChatMessage('');
   };
 
-  // toggle mic: notifica al servidor el estado
   const toggleMic = useCallback(() => {
     const enabling = !isMicOn;
     (async () => {
       if (enabling) {
         try {
           const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
-          // Crear stream combinado
           const combinedStream = new MediaStream();
-
-          // Añadir audio nuevo
           audioStream.getAudioTracks().forEach(track => combinedStream.addTrack(track));
 
-          // Añadir video si ya estaba activo
           if (localStreamRef.current) {
             localStreamRef.current.getVideoTracks().forEach(track => combinedStream.addTrack(track));
           }
@@ -414,7 +361,10 @@ const Meeting: React.FC = () => {
           peersToCall.forEach(p => {
             try {
               const call = peerRef.current.call(p.peerId, combinedStream);
-              call.on('stream', (remoteStream: MediaStream) => attachRemoteStream(p.peerId!, remoteStream));
+              call.on('stream', (remoteStream: MediaStream) => {
+                remoteStreamsRef.current[p.peerId!] = remoteStream;
+                forceRemoteRender(x => x + 1);
+              });
             } catch (err) {
               console.warn('call error', p.peerId, err);
             }
@@ -438,31 +388,26 @@ const Meeting: React.FC = () => {
       if (enabling) {
         try {
           const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
-
-          // Crear un nuevo MediaStream que combine audio (si existe) + video
           const combinedStream = new MediaStream();
 
-          // Añadir tracks de audio si ya estaban activos
           if (localStreamRef.current) {
             localStreamRef.current.getAudioTracks().forEach(track => combinedStream.addTrack(track));
           }
 
-          // Añadir tracks de video nuevos
           videoStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
 
-          // Actualizar la referencia
           localStreamRef.current = combinedStream;
           setLocalVideoStream(combinedStream);
           setIsCameraOn(true);
 
-          // Llamar a todos los peers con el stream combinado
           const peersToCall = participants.filter(p => p.peerId && p.peerId !== (window as any).__PEER_ID__);
           peersToCall.forEach(p => {
             try {
               const call = peerRef.current.call(p.peerId, combinedStream);
               call.on('stream', (remoteStream: MediaStream) => {
                 console.log('Received stream back from', p.peerId);
-                attachRemoteStream(p.peerId!, remoteStream);
+                remoteStreamsRef.current[p.peerId!] = remoteStream;
+                forceRemoteRender(x => x + 1);
               });
             } catch (err) {
               console.warn('call error for video', p.peerId, err);
@@ -475,7 +420,6 @@ const Meeting: React.FC = () => {
           return;
         }
       } else {
-        // Deshabilitar video tracks
         localStreamRef.current?.getVideoTracks().forEach(t => {
           t.stop();
           localStreamRef.current?.removeTrack(t);
@@ -486,18 +430,6 @@ const Meeting: React.FC = () => {
       try { socket.emit('toggle-video', { enabled: enabling }); } catch (err) { console.warn('socket not connected', err); }
     })();
   }, [isCameraOn, participants]);
-
-  // helper to attach remote stream to audio element
-  const attachRemoteStream = (peerId: string, stream: MediaStream) => {
-    remoteStreamsRef.current[peerId] = stream;
-    forceRemoteRender(x => x + 1); // dispara re-render para que el video se muestre
-    console.log('attachRemoteStream🌐🌐🌐', peerId, stream);
-
-
-  };
-
-
-
 
   useEffect(() => {
     return () => {
@@ -670,7 +602,6 @@ const Meeting: React.FC = () => {
               )}
             </div>
             <form className="chat-input-form" onSubmit={handleSendMessage} aria-label="Formulario de envío de mensaje">
-
               <input
                 id="chat-input"
                 type="text"
