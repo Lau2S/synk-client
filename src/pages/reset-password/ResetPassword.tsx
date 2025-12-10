@@ -129,13 +129,15 @@ const ResetPassword: React.FC = () => {
 
   return (
     <div className="container-reset-password">
-      <div className="reset-card">
-        <h2>Restablecer Contraseña</h2>
+      <div className="reset-card" role="region" aria-labelledby="reset-title">
+        <h2 id="reset-title">Restablecer Contraseña</h2>
         <p>Ingresa tu nueva contraseña</p>
 
-        <form className="reset-form" onSubmit={handleResetPassword}>
+        <form className="reset-form" onSubmit={handleResetPassword} role="form" aria-labelledby="reset-title">
           <div className="form-group">
+            <label htmlFor="new-password" className="visually-hidden">Nueva contraseña</label>
             <input
+              id="new-password"
               type="password"
               placeholder="Nueva Contraseña"
               value={newPassword}
@@ -143,11 +145,16 @@ const ResetPassword: React.FC = () => {
               required
               className="form-input"
               minLength={6}
+              aria-label="Nueva contraseña"
+              aria-required="true"
+              aria-invalid={!!error && !newPassword}
             />
           </div>
 
           <div className="form-group">
+            <label htmlFor="confirm-password" className="visually-hidden">Confirmar nueva contraseña</label>
             <input
+              id="confirm-password"
               type="password"
               placeholder="Confirmar Nueva Contraseña"
               value={confirmPassword}
@@ -155,15 +162,20 @@ const ResetPassword: React.FC = () => {
               required
               className="form-input"
               minLength={6}
+              aria-label="Confirmar nueva contraseña"
+              aria-required="true"
+              aria-invalid={!!error && newPassword !== confirmPassword}
             />
           </div>
 
-          {error && <div className="form-error">{error}</div>}
+          {error && <div className="form-error" role="alert" aria-live="assertive">{error}</div>}
 
           <button 
             type="submit" 
             className="reset-button" 
             disabled={loading || !oobCode}
+            aria-busy={loading}
+            aria-label="Actualizar contraseña"
           >
             {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
           </button>
@@ -174,6 +186,7 @@ const ResetPassword: React.FC = () => {
             type="button" 
             className="back-link" 
             onClick={() => navigate('/login')}
+            aria-label="Volver a la página de inicio de sesión"
           >
             Volver al Inicio de Sesión
           </button>

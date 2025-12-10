@@ -219,8 +219,20 @@ const Profile: React.FC = () => {
                     </div>
 
                     <div className="profile-actions">
-                        <button className="profile-button" onClick={handleEdit}>Editar Perfil</button>
-                        <button className="delete-button" onClick={handleDelete}>Eliminar Cuenta</button>
+                        <button 
+                            className="profile-button" 
+                            onClick={handleEdit}
+                            aria-label="Editar información del perfil"
+                        >
+                            Editar Perfil
+                        </button>
+                        <button 
+                            className="delete-button" 
+                            onClick={handleDelete}
+                            aria-label="Eliminar cuenta permanentemente"
+                        >
+                            Eliminar Cuenta
+                        </button>
                     </div>
                 </div>
             </div>
@@ -285,10 +297,23 @@ const Profile: React.FC = () => {
                             {editMsg && <div id="edit-message" className="modal-info" role="alert" aria-live="assertive">{editMsg}</div>}
 
                             {/* Mantengo el mismo orden visual: Guardar (submit) luego Cancelar */}
-                            <button type="submit" className="modal-primary-btn" disabled={editSending} aria-busy={editSending}>
+                            <button 
+                                type="submit" 
+                                className="modal-primary-btn" 
+                                disabled={editSending} 
+                                aria-busy={editSending}
+                                aria-label="Guardar cambios del perfil"
+                            >
                                 {editSending ? 'Guardando...' : 'Guardar'}
                             </button>
-                            <button type="button" className="modal-cancel-btn" onClick={() => setShowEdit(false)}>Cancelar</button>
+                            <button 
+                                type="button" 
+                                className="modal-cancel-btn" 
+                                onClick={() => setShowEdit(false)}
+                                aria-label="Cancelar edición del perfil"
+                            >
+                                Cancelar
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -315,10 +340,24 @@ const Profile: React.FC = () => {
                             {deleteMsg && <div id="delete-message" className="modal-info" role="alert" aria-live="assertive">{deleteMsg}</div>}
 
                             {/* Mantengo el mismo orden visual: Eliminar (confirm) luego Cancelar */}
-                            <button type="button" className="modal-danger-btn" onClick={() => handleDeleteSubmit()} disabled={deleteSending} aria-busy={deleteSending}>
+                            <button 
+                                type="button" 
+                                className="modal-danger-btn" 
+                                onClick={() => handleDeleteSubmit()} 
+                                disabled={deleteSending} 
+                                aria-busy={deleteSending}
+                                aria-label="Confirmar eliminación permanente de la cuenta"
+                            >
                                 {deleteSending ? 'Eliminando...' : 'Eliminar'}
                             </button>
-                            <button type="button" className="modal-cancel-btn" onClick={() => setShowDelete(false)}>Cancelar</button>
+                            <button 
+                                type="button" 
+                                className="modal-cancel-btn" 
+                                onClick={() => setShowDelete(false)}
+                                aria-label="Cancelar eliminación de cuenta"
+                            >
+                                Cancelar
+                            </button>
                         </form>
                     </div>
                 </div>
