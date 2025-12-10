@@ -115,6 +115,8 @@ const Dashboard: React.FC = () => {
                             className="primary-btn" 
                             onClick={handleCreateMeeting}
                             disabled={loading}
+                            aria-label="Crear una nueva reunión"
+                            aria-busy={loading}
                         >
                             {loading ? 'Creando...' : 'Crear Reunión'}
                         </button>
@@ -125,7 +127,9 @@ const Dashboard: React.FC = () => {
 
                         <div className="join-section">
                             <div className="join-row">
+                                <label htmlFor="join-meeting-id" className="visually-hidden">ID de reunión</label>
                                 <input 
+                                    id="join-meeting-id"
                                     className="join-input" 
                                     placeholder="Ingresa el ID de la reunión"
                                     value={joinMeetingId}
@@ -135,11 +139,15 @@ const Dashboard: React.FC = () => {
                                             handleJoinMeeting();
                                         }
                                     }}
+                                    aria-label="Ingresa el ID de la reunión para unirte"
+                                    aria-invalid={!!error && !joinMeetingId.trim()}
                                 />
                                 <button 
                                     className="join-btn"
                                     onClick={handleJoinMeeting}
                                     disabled={loading}
+                                    aria-label="Unirse a la reunión con el ID ingresado"
+                                    aria-busy={loading}
                                 >
                                     {loading ? 'Uniéndose...' : 'Unirse'}
                                 </button>

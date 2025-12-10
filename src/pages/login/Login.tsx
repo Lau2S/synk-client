@@ -235,8 +235,14 @@ const Login: React.FC = () => {
 
           {error && <div id="form-error" className="form-error" role="alert" aria-live="assertive">{error}</div>}
 
-          <button type="submit" className="login-button" disabled={loading} aria-busy={loading}
-            ref={submitBtnRef}>
+          <button 
+            type="submit" 
+            className="login-button" 
+            disabled={loading} 
+            aria-busy={loading}
+            aria-label="Iniciar sesión con email y contraseña"
+            ref={submitBtnRef}
+          >
             {loading ? 'Ingresando...' : 'Iniciar Sesión'}
           </button>
         </form>
@@ -300,13 +306,20 @@ const Login: React.FC = () => {
                 aria-label="Email para recuperar contraseña"
               />
 
-              <button type="submit" className="reset-send-btn" disabled={sending} aria-busy={sending}>
+              <button 
+                type="submit" 
+                className="reset-send-btn" 
+                disabled={sending} 
+                aria-busy={sending}
+                aria-label="Enviar enlace de recuperación de contraseña"
+              >
                 {sending ? 'Enviando...' : 'Enviar'}
               </button>
               <button
                 type="button"
                 className="reset-cancel-btn"
                 onClick={() => { setShowReset(false); setResetEmail(''); }}
+                aria-label="Cancelar recuperación de contraseña"
               >
                 Cancelar
               </button>
