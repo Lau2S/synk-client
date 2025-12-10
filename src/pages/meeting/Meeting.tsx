@@ -194,49 +194,6 @@ const Meeting: React.FC = () => {
       }
     };
 
-    // init PeerJS client (only options form)
-    if (!peerRef.current) {
-      peerRef.current = new Peer({
-        host: PEER_HOST,
-        port: PEER_PORT,
-        path: '/peerjs',
-        secure: PEER_SECURE,
-        config: rtcConfig
-      } as any);
-
-      peerRef.current.on('open', (peerId: string) => {
-        (window as any).__PEER_ID__ = peerId;
-        console.log('Peer open id', peerId);
-
-        (window as any).__PEER_REF__ = peerRef.current;
-        (window as any).__REMOTE_AUDIO_ELES__ = remoteAudioEls;
-        (window as any).__LOCAL_STREAM_REF__ = localStreamRef;
-
-        emitJoinIfReady();
-      });
-
-      peerRef.current.on('error', (err: any) => {
-        console.error('PeerJS error', err);
-      });
-
-      // Answer incoming calls WITHOUT forcing getUserMedia on the callee.
-      // This avoids prompting the receiver for mic permission automatically.
-      peerRef.current.on('call', (call: any) => {
-        console.log('Peer incoming call from', call.peer);
-        try {
-          // If we have a local stream (we enabled mic), send it; otherwise answer without sending tracks.
-          call.answer(localStreamRef.current || undefined);
-        } catch (err) {
-          console.warn('Error answering call', err);
-          try { call.answer(); } catch { }
-        }
-        call.on('stream', (remoteStream: MediaStream) => {
-          console.log('Received remote stream from', call.peer, remoteStream);
-          attachRemoteStream(call.peer, remoteStream);
-        });
-      });
-    }
-
     // connect socket and emit join only when both socket + peer ready
     const onConnect = () => {
       console.log('Socket connected', socket.id);
