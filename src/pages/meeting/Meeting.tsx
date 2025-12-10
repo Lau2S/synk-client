@@ -605,6 +605,10 @@ const Meeting: React.FC = () => {
               ? remoteStreamsRef.current[participant.peerId]
               : undefined;
 
+            // Verificar si el stream tiene video tracks activos
+            const hasActiveVideo = stream && stream.getVideoTracks().length > 0 &&
+              stream.getVideoTracks().some(track => track.readyState === 'live');
+
             return (
               <div
                 key={participant.id}
@@ -613,7 +617,7 @@ const Meeting: React.FC = () => {
                 aria-label={`${participant.name}. Estado: ${participant.audioEnabled ? 'mic activado' : 'silenciado'}.`}
               >
                 <div className="video-wrapper">
-                  {stream ? (
+                  {hasActiveVideo ? (
                     <video
                       className="video-feed"
                       ref={(el) => {
