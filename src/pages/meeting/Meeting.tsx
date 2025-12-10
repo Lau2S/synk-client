@@ -572,34 +572,59 @@ const Meeting: React.FC = () => {
   }
 
   return (
-
     <div className="meeting-container">
-      {/* Announce meeting ID for assistive tech (polite) */}
+      {/* Barra superior con ID de reunión */}
       <div
-        style={{
-          position: 'fixed',
-          top: '20px',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          background: 'rgba(42, 48, 52, 0.95)',
-          padding: '1rem 2rem',
-          borderRadius: '12px',
-          zIndex: 1000,
-          backdropFilter: 'blur(10px)',
-          border: '1px solid rgba(255, 255, 255, 0.1)'
-        }}
-        aria-live="polite"
+        className="meeting-header-bar"
         role="status"
         aria-label={`ID de reunión: ${meetingId}`}
-        ref={chatMessagesRef}
       >
-        <p style={{ margin: 0, color: '#a8c4c5', textAlign: 'center' }}>
-          ID de reunión: <strong style={{ color: '#3ec7cd' }}>{meetingId}</strong>
+        <p>
+          ID de reunión: <strong>{meetingId}</strong>
         </p>
       </div>
 
       <div className="meeting-content">
         <div className="participants-grid" role="region" aria-label="Participantes">
+          {/* Participante local (tú) */}
+          <div
+            className="participant-card local-participant"
+            tabIndex={0}
+            aria-label={`Tú (${user?.displayName || user?.email || 'Usuario'}). ${isMicOn ? 'Micrófono activado' : 'Silenciado'}.`}
+          >
+            <div className="video-wrapper">
+              {localVideoStream ? (
+                <video
+                  className="video-feed"
+                  ref={(el) => {
+                    if (el && localVideoStream && el.srcObject !== localVideoStream) {
+                      el.srcObject = localVideoStream;
+                      el.muted = true;
+                      el.play().catch(() => {});
+                    }
+                  }}
+                  autoPlay
+                  playsInline
+                  muted
+                />
+              ) : (
+                <div className="avatar-large" aria-hidden="true">
+                  <span>
+                    {(user?.displayName || user?.email || 'U').charAt(0).toUpperCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="participant-info">
+              <span className="participant-name">Tú ({user?.displayName || user?.email || 'Usuario'})</span>
+              <div className="participant-status">
+                <span className={`status-indicator ${isMicOn ? 'active' : 'muted'}`} aria-hidden="true"></span>
+                <span className="status-text">{isMicOn ? 'Micrófono activo' : 'Silenciado'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Otros participantes */}
           {participants.map((participant) => {
             const stream = participant.peerId
               ? remoteStreamsRef.current[participant.peerId]
@@ -705,22 +730,6 @@ const Meeting: React.FC = () => {
           </aside>
         )}
       </div>
-
-      {localVideoStream && (
-        <div className="local-preview" aria-label="Vista previa de tu cámara">
-          <video
-            ref={(el) => {
-              if (el && localVideoStream && el.srcObject !== localVideoStream) {
-                el.srcObject = localVideoStream;
-                el.muted = true; // evita eco local
-                el.play().catch(() => { });
-              }
-            }}
-            autoPlay
-            playsInline
-          />
-        </div>
-      )}
 
       <footer className="meeting-controls" role="contentinfo" aria-label="Controles de la reunión">
         <div className="controls-group">
