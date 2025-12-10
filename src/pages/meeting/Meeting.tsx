@@ -72,7 +72,12 @@ const Meeting: React.FC = () => {
   const [chatMessage, setChatMessage] = useState('');
   const [messages, setMessages] = useState<Array<{ sender: string; text: string; time: string }>>([]);
   const [isMicOn, setIsMicOn] = useState(false);
-  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isCameraOn, setIsCameraOn] = useState(false);
+  const [localVideoStream, setLocalVideoStream] = useState<MediaStream | null>(null);
+  const remoteStreamsRef = useRef<Record<string, MediaStream>>({});
+
+  const [, forceRemoteRender] = useState(0); // simple ticker para re-render
+
 
   // Cargar datos de la reunión
   useEffect(() => {
@@ -97,19 +102,20 @@ const Meeting: React.FC = () => {
   }, [meetingId, navigate]);
 
   const [participants, setParticipants] = useState<ParticipantWithMedia[]>(() => ([
-    
+
   ]));
 
   const chatMessagesRef = useRef<HTMLDivElement | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const peerRef = useRef<any | null>(null); // Peer instance
   const remoteAudioEls = useRef<Record<string, HTMLAudioElement>>({});
+  const remoteVideoEls = useRef<Record<string, HTMLVideoElement>>({});
 
   useEffect(() => {
     if (!meetingId) return;
 
-    
-    
+
+
 
     // Helper to (re)create Peer instance with retry on error
     const initPeer = (attempt = 0) => {
@@ -137,7 +143,7 @@ const Meeting: React.FC = () => {
 
         peerRef.current.on('error', (err: any) => {
           console.error('PeerJS error', err);
-          try { peerRef.current?.destroy?.(); } catch {}
+          try { peerRef.current?.destroy?.(); } catch { }
           peerRef.current = null;
           // retry with backoff, but stop after 5 attempts
           if (attempt < 5) {
@@ -156,7 +162,7 @@ const Meeting: React.FC = () => {
             });
             fallback.on('error', (e: any) => console.error('Fallback Peer error', e));
             fallback.on('call', (call: any) => {
-              try { call.answer(localStreamRef.current || undefined); } catch { try { call.answer(); } catch {} }
+              try { call.answer(localStreamRef.current || undefined); } catch { try { call.answer(); } catch { } }
               call.on('stream', (remoteStream: MediaStream) => attachRemoteStream(call.peer, remoteStream));
             });
           } catch (fallbackErr) {
@@ -166,7 +172,7 @@ const Meeting: React.FC = () => {
 
         peerRef.current.on('call', (call: any) => {
           console.log('Peer incoming call from', call.peer);
-          try { call.answer(localStreamRef.current || undefined); } catch (e) { try { call.answer(); } catch {} }
+          try { call.answer(localStreamRef.current || undefined); } catch (e) { try { call.answer(); } catch { } }
           call.on('stream', (remoteStream: MediaStream) => attachRemoteStream(call.peer, remoteStream));
         });
       } catch (err) {
@@ -180,13 +186,13 @@ const Meeting: React.FC = () => {
     initPeer();
 
     const emitJoinIfReady = () => {
-        const peerIdNow = (window as any).__PEER_ID__ || null;
-        const userIdNow = (user as any)?.uid || (user as any)?.id || user?.email || 'anonymous';
-        if (socket.connected && peerIdNow) {
-          console.log('Emitiendo join-meeting (ready)', { meetingId, userId: userIdNow, peerId: peerIdNow });
-          socket.emit('join-meeting', { meetingId, userId: userIdNow, peerId: peerIdNow });
-        }
-      };
+      const peerIdNow = (window as any).__PEER_ID__ || null;
+      const userIdNow = (user as any)?.uid || (user as any)?.id || user?.email || 'anonymous';
+      if (socket.connected && peerIdNow) {
+        console.log('Emitiendo join-meeting (ready)', { meetingId, userId: userIdNow, peerId: peerIdNow });
+        socket.emit('join-meeting', { meetingId, userId: userIdNow, peerId: peerIdNow });
+      }
+    };
 
     // init PeerJS client (only options form)
     if (!peerRef.current) {
@@ -205,7 +211,7 @@ const Meeting: React.FC = () => {
         (window as any).__PEER_REF__ = peerRef.current;
         (window as any).__REMOTE_AUDIO_ELES__ = remoteAudioEls;
         (window as any).__LOCAL_STREAM_REF__ = localStreamRef;
-        
+
         emitJoinIfReady();
       });
 
@@ -222,7 +228,7 @@ const Meeting: React.FC = () => {
           call.answer(localStreamRef.current || undefined);
         } catch (err) {
           console.warn('Error answering call', err);
-          try { call.answer(); } catch {}
+          try { call.answer(); } catch { }
         }
         call.on('stream', (remoteStream: MediaStream) => {
           console.log('Received remote stream from', call.peer, remoteStream);
@@ -324,6 +330,8 @@ const Meeting: React.FC = () => {
 
     const onUserLeft = (payload: { socketId: string; userId?: string; peerId?: string }) => {
       setParticipants(prev => prev.filter(p => p.socketId !== payload.socketId));
+      delete remoteStreamsRef.current[payload.peerId || payload.socketId || ''];
+      forceRemoteRender(x => x + 1);
     };
 
     const onReceive = (msg: { sender: string; senderId?: string; message: string; time?: string }) => {
@@ -336,7 +344,7 @@ const Meeting: React.FC = () => {
       if (isOwn) displaySender = 'Tú';
       else if (msg.sender && msg.sender.includes('@')) {
         const local = msg.sender.split('@')[0];
-        displaySender = local.split(/[\._\-]/).map((p:any) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
+        displaySender = local.split(/[\._\-]/).map((p: any) => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
       } else displaySender = msg.sender || 'Anon';
       setMessages((s) => [...s, { sender: displaySender, text: msg.message, time }]);
       setTimeout(() => { if (chatMessagesRef.current) chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight; }, 50);
@@ -360,14 +368,14 @@ const Meeting: React.FC = () => {
     chatSocket.on('receiveMessage', onReceive);
 
     return () => {
-      try { socket.emit('leaveRoom', meetingId); } catch {}
+      try { socket.emit('leaveRoom', meetingId); } catch { }
       socket.off('existing-peers', onExistingPeers);
       socket.off('user-joined', onUserJoined);
       socket.off('peer-audio-toggle', onPeerAudioToggle);
       socket.off('peer-video-toggle', onPeerVideoToggle);
       socket.off('user-left', onUserLeft);
       socket.off('receiveMessage', onReceive);
-      try { chatSocket.emit('leaveRoom', meetingId); } catch {}
+      try { chatSocket.emit('leaveRoom', meetingId); } catch { }
       chatSocket.off('receiveMessage', onReceive);
       chatSocket.off('connect', chatOnConnect);
       chatSocket.off('connect_error');
@@ -426,13 +434,29 @@ const Meeting: React.FC = () => {
     (async () => {
       if (enabling) {
         try {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          localStreamRef.current = stream;
+          const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+          // Crear stream combinado
+          const combinedStream = new MediaStream();
+
+          // Añadir audio nuevo
+          audioStream.getAudioTracks().forEach(track => combinedStream.addTrack(track));
+
+          // Añadir video si ya estaba activo
+          if (localStreamRef.current) {
+            localStreamRef.current.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+          }
+
+          localStreamRef.current = combinedStream;
+          if (isCameraOn) {
+            setLocalVideoStream(combinedStream);
+          }
           setIsMicOn(true);
+
           const peersToCall = participants.filter(p => p.peerId && p.peerId !== (window as any).__PEER_ID__);
           peersToCall.forEach(p => {
             try {
-              const call = peerRef.current.call(p.peerId, stream);
+              const call = peerRef.current.call(p.peerId, combinedStream);
               call.on('stream', (remoteStream: MediaStream) => attachRemoteStream(p.peerId!, remoteStream));
             } catch (err) {
               console.warn('call error', p.peerId, err);
@@ -449,35 +473,85 @@ const Meeting: React.FC = () => {
       }
       try { socket.emit('toggle-audio', { enabled: enabling }); } catch (err) { console.warn('socket not connected', err); }
     })();
-  }, [isMicOn, participants]);
+  }, [isMicOn, isCameraOn, participants]);
+
+  const toggleCamera = useCallback(() => {
+    const enabling = !isCameraOn;
+    (async () => {
+      if (enabling) {
+        try {
+          const videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+          // Crear un nuevo MediaStream que combine audio (si existe) + video
+          const combinedStream = new MediaStream();
+
+          // Añadir tracks de audio si ya estaban activos
+          if (localStreamRef.current) {
+            localStreamRef.current.getAudioTracks().forEach(track => combinedStream.addTrack(track));
+          }
+
+          // Añadir tracks de video nuevos
+          videoStream.getVideoTracks().forEach(track => combinedStream.addTrack(track));
+
+          // Actualizar la referencia
+          localStreamRef.current = combinedStream;
+          setLocalVideoStream(combinedStream);
+          setIsCameraOn(true);
+
+          // Llamar a todos los peers con el stream combinado
+          const peersToCall = participants.filter(p => p.peerId && p.peerId !== (window as any).__PEER_ID__);
+          peersToCall.forEach(p => {
+            try {
+              const call = peerRef.current.call(p.peerId, combinedStream);
+              call.on('stream', (remoteStream: MediaStream) => {
+                console.log('Received stream back from', p.peerId);
+                attachRemoteStream(p.peerId!, remoteStream);
+              });
+            } catch (err) {
+              console.warn('call error for video', p.peerId, err);
+            }
+          });
+        } catch (err) {
+          console.warn('Camera access denied or error:', err);
+          setIsCameraOn(false);
+          setLocalVideoStream(null);
+          return;
+        }
+      } else {
+        // Deshabilitar video tracks
+        localStreamRef.current?.getVideoTracks().forEach(t => {
+          t.stop();
+          localStreamRef.current?.removeTrack(t);
+        });
+        setIsCameraOn(false);
+        setLocalVideoStream(null);
+      }
+      try { socket.emit('toggle-video', { enabled: enabling }); } catch (err) { console.warn('socket not connected', err); }
+    })();
+  }, [isCameraOn, participants]);
 
   // helper to attach remote stream to audio element
   const attachRemoteStream = (peerId: string, stream: MediaStream) => {
-    if (remoteAudioEls.current[peerId]) {
-      remoteAudioEls.current[peerId].srcObject = stream;
-      return;
-    }
-    const audio = document.createElement('audio');
-    audio.autoplay = true;
-    audio.muted = false;
-    audio.volume = 1;
-    audio.srcObject = stream;
-    audio.setAttribute('data-peerid', peerId);
-    audio.style.display = 'none';
-    document.body.appendChild(audio); 
-    audio.play().catch(() => {
-    // play may be blocked until user interacts; that's normal
-  });
-    // simple: append hidden audio element (you can mount elsewhere)
-    remoteAudioEls.current[peerId] = audio;
+    remoteStreamsRef.current[peerId] = stream;
+    forceRemoteRender(x => x + 1); // dispara re-render para que el video se muestre
+    console.log('attachRemoteStream🌐🌐🌐', peerId, stream);
+
+
   };
+
+
+
 
   useEffect(() => {
     return () => {
-      try { peerRef.current?.destroy?.(); } catch {}
-      Object.values(remoteAudioEls.current).forEach(a => { try { a.pause(); a.srcObject = null; a.remove(); } catch {} });
+      try { peerRef.current?.destroy?.(); } catch { }
+      Object.values(remoteAudioEls.current).forEach(a => { try { a.pause(); a.srcObject = null; a.remove(); } catch { } });
+      Object.values(remoteVideoEls.current).forEach(v => { try { v.pause(); v.srcObject = null; v.remove(); } catch { } });
+      remoteStreamsRef.current = {};
+      setLocalVideoStream(null);
       remoteAudioEls.current = {};
-      try { localStreamRef.current?.getTracks().forEach(t => t.stop()); } catch {}
+      remoteVideoEls.current = {};
+      try { localStreamRef.current?.getTracks().forEach(t => t.stop()); } catch { }
       localStreamRef.current = null;
     };
   }, []);
@@ -498,6 +572,7 @@ const Meeting: React.FC = () => {
   }
 
   return (
+
     <div className="meeting-container">
       {/* Announce meeting ID for assistive tech (polite) */}
       <div
@@ -525,27 +600,49 @@ const Meeting: React.FC = () => {
 
       <div className="meeting-content">
         <div className="participants-grid" role="region" aria-label="Participantes">
-          {participants.map((participant) => (
-            <div
-              key={participant.id}
-              className="participant-card"
-              tabIndex={0}
-              aria-label={`${participant.name}. Estado: ${participant.audioEnabled ? 'mic activado' : 'silenciado'}.`}
-            >
-              <div className="video-placeholder" aria-hidden="true">
-                <div className="avatar-large" aria-hidden="true">
-                  <span>{participant.initial}</span>
+          {participants.map((participant) => {
+            const stream = participant.peerId
+              ? remoteStreamsRef.current[participant.peerId]
+              : undefined;
+
+            return (
+              <div
+                key={participant.id}
+                className="participant-card"
+                tabIndex={0}
+                aria-label={`${participant.name}. Estado: ${participant.audioEnabled ? 'mic activado' : 'silenciado'}.`}
+              >
+                <div className="video-wrapper">
+                  {stream ? (
+                    <video
+                      className="video-feed"
+                      ref={(el) => {
+                        if (el && stream && el.srcObject !== stream) {
+                          el.srcObject = stream;
+                          el.play().catch(() => { });
+                        }
+                      }}
+                      autoPlay
+                      playsInline
+                      muted={false}
+                    />
+                  ) : (
+                    <div className="avatar-large" aria-hidden="true">
+                      <span>{participant.initial}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="participant-info">
+                  <span className="participant-name">{participant.name}</span>
+                  <div className="participant-status">
+                    <span className={`status-indicator ${participant.audioEnabled ? 'active' : 'muted'}`} aria-hidden="true"></span>
+                    <span className="status-text">{participant.audioEnabled ? 'En línea' : 'Silenciado'}</span>
+                  </div>
                 </div>
               </div>
-              <div className="participant-info">
-                <span className="participant-name">{participant.name}</span>
-                <div className="participant-status">
-                  <span className={`status-indicator ${participant.audioEnabled ? 'active' : 'muted'}`} aria-hidden="true"></span>
-                  <span className="status-text">{participant.audioEnabled ? 'En línea' : 'Silenciado'}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {isChatOpen && (
@@ -609,6 +706,22 @@ const Meeting: React.FC = () => {
         )}
       </div>
 
+      {localVideoStream && (
+        <div className="local-preview" aria-label="Vista previa de tu cámara">
+          <video
+            ref={(el) => {
+              if (el && localVideoStream && el.srcObject !== localVideoStream) {
+                el.srcObject = localVideoStream;
+                el.muted = true; // evita eco local
+                el.play().catch(() => { });
+              }
+            }}
+            autoPlay
+            playsInline
+          />
+        </div>
+      )}
+
       <footer className="meeting-controls" role="contentinfo" aria-label="Controles de la reunión">
         <div className="controls-group">
           <button
@@ -623,11 +736,7 @@ const Meeting: React.FC = () => {
 
           <button
             className={`control-button ${!isCameraOn ? 'disabled' : ''}`}
-            onClick={() => {
-              const enabled = !isCameraOn;
-              setIsCameraOn(enabled);
-              try { socket.emit('toggle-video', { enabled }); } catch (err) { /* ignore */ }
-            }}
+            onClick={toggleCamera}
             aria-pressed={isCameraOn}
             aria-label={isCameraOn ? 'Desactivar cámara' : 'Activar cámara'}
           >
